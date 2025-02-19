@@ -1,0 +1,4 @@
+export interface TooltipProps {
+  // other existing props...
+  content: React.ReactNode;
+} 
