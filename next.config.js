@@ -7,10 +7,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Add this to disable server-side features
-  experimental: {
-    appDir: true,
-  },
   // Ensure trailing slashes are handled correctly
   trailingSlash: true,
 }
