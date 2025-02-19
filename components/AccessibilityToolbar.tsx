@@ -12,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import Tooltip from 'path/to/tooltip/component'
 import { TooltipProps } from 'path/to/tooltip/props/file'
 
 export default function AccessibilityToolbar() {
