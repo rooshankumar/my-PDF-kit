@@ -1,7 +1,7 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { Moon, Sun, Keyboard } from "lucide-react"
+import { Moon, Sun, Keyboard, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipProvider } from "@/components/ui/tooltip"
 import {
@@ -22,12 +22,21 @@ export default function AccessibilityToolbar() {
     setTheme(theme === "light" ? "dark" : "light")
   }
 
+  const resetTheme = () => {
+    setTheme("light")
+  }
+
   return (
     <TooltipProvider>
       <div className="flex justify-end space-x-2">
         <Tooltip content={`Switch to ${theme === "light" ? "dark" : "light"} mode`}>
           <Button variant="outline" size="icon" onClick={toggleTheme}>
             {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          </Button>
+        </Tooltip>
+        <Tooltip content="Reset to default theme">
+          <Button variant="outline" size="icon" onClick={resetTheme}>
+            <RefreshCw className="h-4 w-4" />
           </Button>
         </Tooltip>
         <Dialog>
