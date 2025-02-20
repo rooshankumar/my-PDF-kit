@@ -144,30 +144,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-secondary-light dark:bg-dark-bg text-gray-900 dark:text-white transition-colors duration-300">
       <div className="container mx-auto px-4 py-6">
-        <button
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="fixed top-6 right-6 p-2 rounded-lg bg-white dark:bg-zinc-800 
-            border border-gray-300 dark:border-gray-700
-            hover:bg-gray-100 dark:hover:bg-zinc-700
-            transition-colors duration-200
-            shadow-lg"
-          aria-label="Toggle theme"
-        >
-          {theme === 'dark' ? (
-            <Sun className="w-5 h-5 text-yellow-500" />
-          ) : (
-            <Moon className="w-5 h-5 text-gray-700" />
-          )}
-        </button>
-
-        <h1 className="text-4xl font-bold text-center mb-10 py-2
-          bg-gradient-to-r from-[#FF5733] to-[#FF1493] 
-          dark:from-[#FF5733] dark:to-[#FF1493]
-          bg-clip-text text-transparent
-          leading-relaxed">
-          Image to PDF Converter
-        </h1>
-
+        <h1 className="text-3xl font-bold mb-8 text-center">Convert Images to PDF</h1>
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="grid grid-cols-3 gap-4">
             <select 
@@ -225,4 +202,3 @@ export default function Home() {
     </main>
   )
 }
-

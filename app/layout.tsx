@@ -3,17 +3,20 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from './theme-provider'
+import { Navigation } from "@/components/navigation"
+import { Footer } from "@/components/footer"
 import { ClientLayout } from './client-layout'
+import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: 'Image to PDF Converter',
-  description: 'Convert your images to PDF files easily with our free online tool.',
-  keywords: 'image to pdf, pdf converter, image converter, online pdf tool',
-  authors: [{ name: 'Your Name' }],
-  creator: 'Your Name',
-  publisher: 'Your Name',
+  title: 'PDF Kit - Convert Images to PDF',
+  description: 'Free online tool to convert images to PDF with customizable options',
+  keywords: 'pdf converter, image to pdf, online pdf tool, free pdf converter',
+  authors: [{ name: 'PDF Kit Team' }],
+  creator: 'PDF Kit',
+  publisher: 'PDF Kit',
   formatDetection: {
     email: false,
     address: false,
@@ -42,11 +45,23 @@ export default function RootLayout({
         }} />
       </head>
       <body className={`${inter.className} antialiased`}>
-        <ThemeProvider>
-          <ClientLayout>
-            {children}
-          </ClientLayout>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="min-h-screen flex flex-col">
+            <Navigation />
+            <main className="flex-grow">
+              <ClientLayout>
+                {children}
+              </ClientLayout>
+            </main>
+            <Footer />
+          </div>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )

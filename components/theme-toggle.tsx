@@ -1,45 +1,32 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { Moon, Sun } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 
 export function ThemeToggle() {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
 
-  // When mounted on client, now we can show the UI
   useEffect(() => {
     setMounted(true)
   }, [])
 
   if (!mounted) {
-    return (
-      <button
-        className="fixed top-4 right-4 p-2 rounded-lg bg-white dark:bg-black 
-          border border-gray-200 dark:border-gray-800
-          hover:bg-gray-100 dark:hover:bg-gray-900
-          transition-colors duration-200"
-        aria-label="Loading theme"
-      >
-        <div className="w-5 h-5" />
-      </button>
-    )
+    return null;
   }
 
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="fixed top-4 right-4 p-2 rounded-lg bg-white dark:bg-black 
-        border border-gray-200 dark:border-gray-800
-        hover:bg-gray-100 dark:hover:bg-gray-900
-        transition-colors duration-200"
+      className="inline-flex items-center justify-center rounded-md
+        text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white
+        focus:outline-none focus:ring-2 focus:ring-blue-500"
       aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
     >
       {theme === "dark" ? (
-        <Sun className="w-5 h-5 text-yellow-500" />
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-yellow-500"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
       ) : (
-        <Moon className="w-5 h-5 text-gray-800" />
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
       )}
     </button>
   )
