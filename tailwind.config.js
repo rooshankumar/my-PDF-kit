@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    darkMode: 'class',
     content: [
       './pages/**/*.{js,ts,jsx,tsx,mdx}',
       './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -99,12 +100,7 @@ module.exports = {
         animation: {
           'accordion-down': 'accordion-down 0.2s ease-out',
           'accordion-up': 'accordion-up 0.2s ease-out'
-        },
-        boxShadow: {
-          'neon': '0 0 5px theme(colors.primary.blue), 0 0 20px theme(colors.primary.blue)',
-          'neon-pink': '0 0 5px theme(colors.accent.pink), 0 0 20px theme(colors.accent.pink)',
-          'neon-cyan': '0 0 5px theme(colors.dark.cyan), 0 0 20px theme(colors.dark.cyan)',
-        },
+        }
       }
     },
     plugins: [],

@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   // Enable static exports for Netlify
-  output: 'export',
+  output: 'standalone',
   
   // Disable image optimization since it's not supported with 'output: export'
   images: {
@@ -11,6 +11,9 @@ const nextConfig = {
   },
   // Ensure trailing slashes are handled correctly
   // trailingSlash: true,
+  experimental: {
+    serverActions: true,
+  },
 }
 
 module.exports = nextConfig 

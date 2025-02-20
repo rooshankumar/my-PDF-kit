@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes'
 import { DragDropFile } from '@/components/DragDropFile'
 import { Toaster } from 'sonner'
 import { jsPDF } from 'jspdf'
+import { Sun, Moon } from 'lucide-react'
 
 interface ConversionSettings {
   pageSize: 'a4' | 'a3' | 'letter'
@@ -24,7 +25,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<boolean>(false)
   const [previews, setPreviews] = useState<PreviewImage[]>([])
-  const { theme } = useTheme()
+  const { theme, setTheme } = useTheme()
   const [settings, setSettings] = useState<ConversionSettings>({
     pageSize: 'a4',
     orientation: 'portrait',
@@ -122,90 +123,52 @@ export default function Home() {
   }
 
   const handleConversion = async (files: File[]): Promise<Blob> => {
-    const doc = new jsPDF({
-      orientation: settings.orientation,
-      unit: 'mm',
-      format: settings.pageSize
-    });
+    const formData = new FormData()
+    files.forEach(file => formData.append('files', file))
+    formData.append('pageSize', settings.pageSize)
+    formData.append('orientation', settings.orientation)
+    formData.append('compression', settings.compression)
 
-    try {
-      for (let i = 0; i < files.length; i++) {
-        if (i > 0) {
-          doc.addPage();
-        }
+    const response = await fetch('/api/convert', {
+      method: 'POST',
+      body: formData
+    })
 
-        const base64Image = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            const base64 = reader.result as string;
-            resolve(base64);
-          };
-          reader.readAsDataURL(files[i]);
-        });
-
-        const img = await new Promise<HTMLImageElement>((resolve) => {
-          const img = new window.Image();
-          img.onload = () => resolve(img);
-          img.onerror = (error) => {
-            console.error('Error loading image:', error);
-            resolve(img);
-          };
-          img.src = base64Image;
-        });
-
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        
-        const imgRatio = img.width / img.height;
-        const pageRatio = pageWidth / pageHeight;
-        
-        let finalWidth = pageWidth - 20;
-        let finalHeight = finalWidth / imgRatio;
-        
-        if (finalHeight > pageHeight - 20) {
-          finalHeight = pageHeight - 20;
-          finalWidth = finalHeight * imgRatio;
-        }
-        
-        const x = (pageWidth - finalWidth) / 2;
-        const y = (pageHeight - finalHeight) / 2;
-
-        const imageQuality = settings.compression === 'high' ? 0.3 : 
-                           settings.compression === 'medium' ? 0.6 : 0.9;
-
-        doc.addImage(
-          base64Image,
-          'JPEG',
-          x,
-          y,
-          finalWidth,
-          finalHeight,
-          `image-${i}`,
-          'FAST',
-          0,
-          imageQuality
-        );
-      }
-
-      return doc.output('blob');
-
-    } catch (error) {
-      console.error('PDF conversion error:', error);
-      throw new Error('Failed to convert images to PDF');
+    if (!response.ok) {
+      throw new Error('Conversion failed')
     }
+
+    return response.blob()
   }
 
   return (
-    <main className="min-h-screen bg-secondary-light dark:bg-dark-bg text-foreground">
-      <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold text-center mb-8 
-          bg-gradient-to-r from-primary-red to-accent-pink dark:from-dark-magenta dark:to-dark-cyan 
-          bg-clip-text text-transparent">
+    <main className="min-h-screen bg-secondary-light dark:bg-dark-bg text-gray-900 dark:text-white transition-colors duration-300">
+      <div className="container mx-auto px-4 py-6">
+        <button
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="fixed top-6 right-6 p-2 rounded-lg bg-white dark:bg-zinc-800 
+            border border-gray-300 dark:border-gray-700
+            hover:bg-gray-100 dark:hover:bg-zinc-700
+            transition-colors duration-200
+            shadow-lg"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? (
+            <Sun className="w-5 h-5 text-yellow-500" />
+          ) : (
+            <Moon className="w-5 h-5 text-gray-700" />
+          )}
+        </button>
+
+        <h1 className="text-4xl font-bold text-center mb-10 py-2
+          bg-gradient-to-r from-[#FF5733] to-[#FF1493] 
+          dark:from-[#FF5733] dark:to-[#FF1493]
+          bg-clip-text text-transparent
+          leading-relaxed">
           Image to PDF Converter
         </h1>
-        
-        {/* Settings and Convert Button Section */}
-        <div className="max-w-2xl mx-auto mb-6 space-y-4">
+
+        <div className="max-w-4xl mx-auto space-y-8">
           <div className="grid grid-cols-3 gap-4">
             <select 
               value={settings.pageSize}
@@ -248,15 +211,17 @@ export default function Home() {
               <option value="high">High</option>
             </select>
           </div>
-        </div>
 
-        {/* Drag & Drop Area */}
-        <DragDropFile 
-          onFileSelect={handleFileSelect}
-          onConvert={handleConversion}
-        />
+          <DragDropFile 
+            onFileSelect={handleFileSelect}
+            onConvert={handleConversion}
+          />
+        </div>
       </div>
-      <Toaster />
+      <Toaster 
+        theme={theme as 'light' | 'dark'} 
+        position="bottom-right"
+      />
     </main>
   )
 }
