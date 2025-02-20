@@ -2,10 +2,8 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { Providers } from "./providers"
-import { Toaster } from "@/components/ui/toaster"
-import { ThemeToggle } from '../components/theme-toggle'
-import { ThemeProvider } from 'next-themes'
+import { ThemeProvider } from './theme-provider'
+import { ClientLayout } from './client-layout'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -30,27 +28,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
-      <body className="min-h-screen bg-secondary-light dark:bg-dark-bg transition-colors duration-300">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Providers>
-            <div className="min-h-screen bg-white dark:bg-zinc-900 transition-colors duration-200">
-              <ThemeToggle />
-              <main>
-                {children}
-              </main>
-            </div>
-            <Toaster />
-          </Providers>
+      <body className={`${inter.className} antialiased`}>
+        <ThemeProvider>
+          <ClientLayout>
+            {children}
+          </ClientLayout>
         </ThemeProvider>
       </body>
     </html>
   )
 }
-
-import './globals.css'

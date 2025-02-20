@@ -1,23 +1,15 @@
 [build]
   command = "npm run build"
   publish = ".next"
-  functions = "netlify/functions"
 
 [build.environment]
+  NEXT_USE_NETLIFY_EDGE = "true"
   NODE_VERSION = "18.17.0"
   NPM_VERSION = "9.6.7"
   NEXT_TELEMETRY_DISABLED = "1"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-
-[functions]
-  included_files = ["node_modules/sharp/**/*"]
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
 
 [[headers]]
   for = "/*"
@@ -26,4 +18,4 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()" 
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
