@@ -196,10 +196,16 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-900 transition-colors duration-200">
-      <main className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold text-center mb-8">Image to PDF Converter</h1>
-        <div className="space-y-6">
+    <main className="min-h-screen bg-secondary-light dark:bg-dark-bg text-foreground">
+      <div className="container mx-auto p-4">
+        <h1 className="text-3xl font-bold text-center mb-8 
+          bg-gradient-to-r from-primary-red to-accent-pink dark:from-dark-magenta dark:to-dark-cyan 
+          bg-clip-text text-transparent">
+          Image to PDF Converter
+        </h1>
+        
+        {/* Settings and Convert Button Section */}
+        <div className="max-w-2xl mx-auto mb-6 space-y-4">
           <div className="grid grid-cols-3 gap-4">
             <select 
               value={settings.pageSize}
@@ -207,8 +213,8 @@ export default function Home() {
               className="px-4 py-2.5 text-sm bg-white dark:bg-zinc-800 
                 border border-gray-300 dark:border-gray-700 
                 text-gray-900 dark:text-gray-100 rounded-lg 
-                focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 
-                dark:focus:border-violet-400 transition-colors duration-150"
+                focus:ring-2 focus:ring-[#FF5733]/20 focus:border-[#FF5733]
+                transition-colors duration-150"
             >
               <option value="a4">A4</option>
               <option value="a3">A3</option>
@@ -221,8 +227,8 @@ export default function Home() {
               className="px-4 py-2.5 text-sm bg-white dark:bg-zinc-800 
                 border border-gray-300 dark:border-gray-700 
                 text-gray-900 dark:text-gray-100 rounded-lg 
-                focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 
-                dark:focus:border-violet-400 transition-colors duration-150"
+                focus:ring-2 focus:ring-[#FF5733]/20 focus:border-[#FF5733]
+                transition-colors duration-150"
             >
               <option value="portrait">Portrait</option>
               <option value="landscape">Landscape</option>
@@ -234,23 +240,24 @@ export default function Home() {
               className="px-4 py-2.5 text-sm bg-white dark:bg-zinc-800 
                 border border-gray-300 dark:border-gray-700 
                 text-gray-900 dark:text-gray-100 rounded-lg 
-                focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 
-                dark:focus:border-violet-400 transition-colors duration-150"
+                focus:ring-2 focus:ring-[#FF5733]/20 focus:border-[#FF5733]
+                transition-colors duration-150"
             >
               <option value="none">No Compression</option>
-              <option value="medium">Medium Compression</option>
-              <option value="high">High Compression</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
             </select>
           </div>
-
-          <DragDropFile 
-            onFileSelect={handleFileSelect}
-            onConvert={handleConversion}
-          />
         </div>
-        <Toaster />
-      </main>
-    </div>
+
+        {/* Drag & Drop Area */}
+        <DragDropFile 
+          onFileSelect={handleFileSelect}
+          onConvert={handleConversion}
+        />
+      </div>
+      <Toaster />
+    </main>
   )
 }
 

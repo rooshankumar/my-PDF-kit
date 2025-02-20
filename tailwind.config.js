@@ -19,10 +19,14 @@ module.exports = {
             foreground: 'hsl(var(--popover-foreground))'
           },
           primary: {
+            red: '#FF5733',
+            blue: '#33CFFF',
             DEFAULT: 'hsl(var(--primary))',
             foreground: 'hsl(var(--primary-foreground))'
           },
           secondary: {
+            light: '#F9F9F9',
+            gold: '#FFD700',
             DEFAULT: 'hsl(var(--secondary))',
             foreground: 'hsl(var(--secondary-foreground))'
           },
@@ -31,6 +35,9 @@ module.exports = {
             foreground: 'hsl(var(--muted-foreground))'
           },
           accent: {
+            success: '#32CD32',
+            pink: '#FF1493',
+            orange: '#FF4500',
             DEFAULT: 'hsl(var(--accent))',
             foreground: 'hsl(var(--accent-foreground))'
           },
@@ -57,7 +64,14 @@ module.exports = {
             'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
             border: 'hsl(var(--sidebar-border))',
             ring: 'hsl(var(--sidebar-ring))'
-          }
+          },
+          dark: {
+            bg: '#1E1E1E',
+            card: '#1E1E1E',
+            accent: '#BB86FC',
+            magenta: '#FF00FF',
+            cyan: '#00FFFF',
+          },
         },
         borderRadius: {
           lg: 'var(--radius)',
@@ -85,7 +99,12 @@ module.exports = {
         animation: {
           'accordion-down': 'accordion-down 0.2s ease-out',
           'accordion-up': 'accordion-up 0.2s ease-out'
-        }
+        },
+        boxShadow: {
+          'neon': '0 0 5px theme(colors.primary.blue), 0 0 20px theme(colors.primary.blue)',
+          'neon-pink': '0 0 5px theme(colors.accent.pink), 0 0 20px theme(colors.accent.pink)',
+          'neon-cyan': '0 0 5px theme(colors.dark.cyan), 0 0 20px theme(colors.dark.cyan)',
+        },
       }
     },
     plugins: [],

@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, File, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Progress } from "@/components/ui/progress";
+import { ProgressBar } from './ui/ProgressBar';
 
 interface DragDropFileProps {
   onFileSelect: (files: File[]) => void;
@@ -106,8 +106,9 @@ export function DragDropFile({ onFileSelect, onConvert }: DragDropFileProps) {
         className={`p-6 sm:p-8 border-2 border-dashed rounded-xl cursor-pointer 
           transition-all duration-300 ease-in-out transform
           ${isDragActive 
-            ? 'border-violet-500 bg-violet-50/50 dark:bg-violet-900/10 scale-[1.02] shadow-lg' 
-            : 'border-gray-300 hover:border-violet-400 hover:bg-gray-50/50 dark:hover:bg-gray-800/10'}
+            ? 'border-primary-blue bg-primary-blue/10 dark:bg-primary-purple/10 scale-[1.02] shadow-lg' 
+            : 'border-secondary-gray hover:border-primary-blue dark:hover:border-dark-accent'}
+          bg-secondary-light dark:bg-dark-card
           touch-manipulation relative
           ${isConverting ? 'pointer-events-none opacity-70' : ''}`}
       >
@@ -182,7 +183,7 @@ export function DragDropFile({ onFileSelect, onConvert }: DragDropFileProps) {
                         ? `${file.name.slice(0, 10)}...` 
                         : file.name}
                     </p>
-                    <p className="text-[10px] text-gray-500">
+                    <p className="text-[10px] text-gray-500 dark:text-gray-400">
                       {(file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
@@ -201,27 +202,34 @@ export function DragDropFile({ onFileSelect, onConvert }: DragDropFileProps) {
 
       {/* Conversion Progress */}
       {isConverting && (
-        <div className="space-y-2 animate-fade-in">
-          <Progress value={convertingProgress} className="h-1.5" />
+        <div className="space-y-2">
+          <ProgressBar 
+            value={convertingProgress} 
+            className="h-1.5 bg-secondary-gray dark:bg-dark-card"
+            barClassName="bg-primary-blue dark:bg-dark-accent"
+          />
           <p className="text-sm text-center text-gray-600 dark:text-gray-400">
             Converting... {convertingProgress}%
           </p>
         </div>
       )}
 
-      {/* Convert Button */}
+      {/* Convert Button with stable red color */}
       <button
         onClick={handleConversion}
         disabled={isConverting || !files.length}
         className="w-full py-4 text-sm font-medium text-white 
-          bg-gradient-to-r from-violet-600 to-indigo-600 
-          dark:from-violet-500 dark:to-indigo-500 
-          hover:from-violet-700 hover:to-indigo-700 
-          dark:hover:from-violet-600 dark:hover:to-indigo-600 
+          bg-[#FF5733] hover:bg-[#FF4500]
+          dark:bg-[#FF1493] dark:hover:bg-[#FF0066]
+          hover:shadow-lg hover:shadow-[#FF5733]/30
+          dark:hover:shadow-[#FF1493]/30
           disabled:opacity-50 disabled:cursor-not-allowed 
+          disabled:hover:shadow-none
           rounded-xl transition-all duration-300 
-          transform hover:scale-[0.99] hover:shadow-lg
-          focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+          transform hover:scale-[0.99]
+          focus:outline-none focus:ring-2 focus:ring-[#FF5733]/50
+          disabled:bg-gray-400 disabled:dark:bg-gray-600
+          border border-transparent"
       >
         {isConverting ? (
           <>
