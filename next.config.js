@@ -8,7 +8,7 @@ const nextConfig = {
     unoptimized: true,
   },
   // Ensure trailing slashes are handled correctly
-  trailingSlash: true,
+  // trailingSlash: true,
 }
 
 module.exports = nextConfig 
