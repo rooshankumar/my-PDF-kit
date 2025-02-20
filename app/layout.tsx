@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from './theme-provider'
 import { ClientLayout } from './client-layout'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -32,6 +33,7 @@ export default function RootLayout({
         <meta name="google-adsense-account" content="ca-pub-4504451013594034" />
       </head>
       <body className={`${inter.className} antialiased`}>
+        <GoogleAnalytics />
         <ThemeProvider>
           <ClientLayout>
             {children}
