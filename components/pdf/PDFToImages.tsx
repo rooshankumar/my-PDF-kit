@@ -9,9 +9,7 @@ import { Progress } from "@/components/ui/progress"
 import { convertPDFToImages } from "@/lib/pdf/utils"
 import { downloadBlob, createZipFromBlobs } from "@/lib/file-utils"
 
-interface PDFToImagesProps {}
-
-export function PDFToImages({}: PDFToImagesProps) {
+export function PDFToImages() {
   const [files, setFiles] = useState<FileWithPreview[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -30,7 +28,6 @@ export function PDFToImages({}: PDFToImagesProps) {
       })
 
       if (images.length === 1) {
-        // Single page - direct download
         const fileName = files[0].file.name.replace('.pdf', '.jpg')
         downloadBlob(images[0], fileName)
         toast({
@@ -38,7 +35,6 @@ export function PDFToImages({}: PDFToImagesProps) {
           description: "Image has been downloaded"
         })
       } else {
-        // Multiple pages - create zip
         const baseName = files[0].file.name.replace('.pdf', '')
         await createZipFromBlobs(images, {
           filename: baseName,
