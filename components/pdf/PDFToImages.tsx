@@ -9,7 +9,9 @@ import { Progress } from "@/components/ui/progress"
 import { convertPDFToImages } from "@/lib/pdf/utils"
 import { downloadBlob, createZipFromBlobs } from "@/lib/file-utils"
 
-export function PDFToImages() {
+interface PDFToImagesProps {}
+
+export function PDFToImages({}: PDFToImagesProps) {
   const [files, setFiles] = useState<FileWithPreview[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
   const [progress, setProgress] = useState(0)
