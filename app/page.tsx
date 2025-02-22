@@ -13,6 +13,7 @@ import {
   Images
 } from "lucide-react"
 import Link from "next/link"
+import { PDFToImages } from "@/components/pdf/PDFToImages"
 
 interface Feature {
   title: string
@@ -62,42 +63,12 @@ const features: Feature[] = [
 
 export default function HomePage() {
   return (
-    <div className="container py-8 md:py-12">
-      <div className="mx-auto flex max-w-[980px] flex-col items-center gap-8 text-center">
-        <motion.h1 
-          className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          Welcome to My PDF Kit
-        </motion.h1>
-        <motion.p 
-          className="max-w-[750px] text-lg text-muted-foreground sm:text-xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          Easy-to-use tools to convert, compress, and manipulate your PDFs and images. No registration required.
-        </motion.p>
-      </div>
-      <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3 mt-8">
-        {features.map((feature, index) => (
-          <motion.div
-            key={feature.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            <Link href={feature.href}>
-              <Card className="p-6 hover:bg-muted/50 transition-colors">
-                <div className="mb-4">{feature.icon}</div>
-                <h3 className="mb-2 font-semibold">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
-              </Card>
-            </Link>
-          </motion.div>
-        ))}
+    <div className="container py-8">
+      <h1 className="text-3xl font-bold text-center mb-8">
+        Convert PDF to Images
+      </h1>
+      <div className="max-w-xl mx-auto">
+        <PDFToImages />
       </div>
     </div>
   )
