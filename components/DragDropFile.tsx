@@ -1,247 +1,276 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Upload, File, X, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { ProgressBar } from './ui/ProgressBar';
+"use client"
+
+import { useState, useCallback, useRef, useEffect } from 'react'
+import { FileWithPreview } from '@/types/files'
+import { useToast } from '@/components/ui/use-toast'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { Upload, X, FileText, Image as ImageIcon } from 'lucide-react'
 
 interface DragDropFileProps {
-  onFileSelect: (files: File[]) => void;
-  onConvert: (files: File[]) => Promise<Blob>;
+  onFilesSelected: (files: FileWithPreview[]) => void
+  files: FileWithPreview[]
+  setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[]>>
+  acceptedFileTypes?: string[]
+  maxFileSize?: number // in MB
+  previewSize?: 'small' | 'medium' | 'large'
+  showInBox?: boolean
+  maxFiles?: number
 }
 
-export function DragDropFile({ onFileSelect, onConvert }: DragDropFileProps) {
-  const [files, setFiles] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
-  const [isConverting, setIsConverting] = useState(false);
-  const [convertingProgress, setConvertingProgress] = useState(0);
+export function DragDropFile({
+  onFilesSelected,
+  files,
+  setFiles,
+  acceptedFileTypes = ['*/*'],
+  maxFileSize = 50,
+  previewSize = 'medium',
+  showInBox = true,
+  maxFiles = 10
+}: DragDropFileProps) {
+  const [isDragging, setIsDragging] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const dropZoneRef = useRef<HTMLDivElement>(null)
+  const { toast } = useToast()
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const newFiles = [...files, ...acceptedFiles];
-    setFiles(newFiles);
-    onFileSelect(newFiles);
-
-    const newPreviews = acceptedFiles.map(file => {
-      if (file.type.startsWith('image/')) {
-        return URL.createObjectURL(file);
-      }
-      return '';
-    });
-    setPreviews([...previews, ...newPreviews]);
-  }, [files, previews, onFileSelect]);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.bmp'],
-    },
-    maxFiles: 10,
-  });
-
-  const removeFile = (index: number) => {
-    const newFiles = files.filter((_, i) => i !== index);
-    const newPreviews = previews.filter((_, i) => i !== index);
-    
-    URL.revokeObjectURL(previews[index]);
-    
-    setFiles(newFiles);
-    setPreviews(newPreviews);
-    onFileSelect(newFiles);
-  };
+  const previewSizeClasses = {
+    small: 'w-20 h-20',
+    medium: 'w-32 h-32',
+    large: 'w-48 h-48'
+  }
 
   useEffect(() => {
+    // Cleanup previews when component unmounts
     return () => {
-      previews.forEach(preview => URL.revokeObjectURL(preview));
-    };
-  }, [previews]);
-
-  const handleConversion = async () => {
-    if (!files.length) return;
-
-    try {
-      setIsConverting(true);
-      
-      toast.loading('Converting files...', {
-        duration: Infinity,
-        id: 'conversion-toast'
-      });
-
-      const progressInterval = setInterval(() => {
-        setConvertingProgress(prev => {
-          if (prev >= 90) clearInterval(progressInterval);
-          return Math.min(prev + 10, 90);
-        });
-      }, 500);
-
-      const pdfBlob = await onConvert(files);
-      
-      clearInterval(progressInterval);
-      setConvertingProgress(100);
-      
-      // Download the PDF
-      const url = URL.createObjectURL(pdfBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'converted-images.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      toast.dismiss('conversion-toast');
-      toast.success('Conversion complete! Your download has started.');
-      
-    } catch (error) {
-      console.error('Conversion error:', error);
-      toast.error('Error converting files. Please try again.');
-    } finally {
-      setIsConverting(false);
-      setConvertingProgress(0);
+      files.forEach(file => {
+        if (file.preview) {
+          URL.revokeObjectURL(file.preview)
+        }
+      })
     }
-  };
+  }, [files])
+
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    // Only set isDragging to false if we're leaving the dropzone
+    if (e.currentTarget === dropZoneRef.current) {
+      setIsDragging(false)
+    }
+  }, [])
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
+  const validateFile = useCallback((file: File) => {
+    // Check file type
+    const isValidType = acceptedFileTypes.includes('*/*') ||
+      acceptedFileTypes.some(type => {
+        if (type.endsWith('/*')) {
+          const baseType = type.split('/')[0]
+          return file.type.startsWith(baseType + '/')
+        }
+        return file.type === type
+      })
+
+    if (!isValidType) {
+      throw new Error(`Invalid file type. Accepted types: ${acceptedFileTypes.join(', ')}`)
+    }
+
+    // Check file size
+    const sizeInMB = file.size / (1024 * 1024)
+    if (sizeInMB > maxFileSize) {
+      throw new Error(`File size exceeds ${maxFileSize}MB limit`)
+    }
+  }, [acceptedFileTypes, maxFileSize])
+
+  const createPreview = useCallback((file: File): string => {
+    if (file.type.startsWith('image/')) {
+      return URL.createObjectURL(file)
+    }
+    
+    if (file.type === 'application/pdf') {
+      // For PDFs, we'll return a placeholder. In a production app,
+      // you might want to generate a thumbnail using pdf.js
+      return ''
+    }
+    
+    return ''
+  }, [])
+
+  const processFiles = useCallback(async (fileList: FileList | File[]) => {
+    const newFiles: FileWithPreview[] = []
+    const errors: string[] = []
+
+    // Check total number of files
+    if (files.length + fileList.length > maxFiles) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: `Maximum ${maxFiles} files allowed`
+      })
+      return
+    }
+
+    for (const file of fileList) {
+      try {
+        validateFile(file)
+        const preview = createPreview(file)
+        newFiles.push({
+          file,
+          preview,
+          name: file.name,
+          type: file.type,
+          size: file.size
+        })
+      } catch (error) {
+        errors.push(`${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      }
+    }
+
+    if (errors.length > 0) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: errors.join('\n')
+      })
+    }
+
+    if (newFiles.length > 0) {
+      const updatedFiles = [...files, ...newFiles]
+      setFiles(updatedFiles)
+      onFilesSelected(updatedFiles)
+    }
+  }, [files, setFiles, onFilesSelected, validateFile, maxFiles, toast, createPreview])
+
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+
+    const droppedFiles = Array.from(e.dataTransfer.files)
+    await processFiles(droppedFiles)
+  }, [processFiles])
+
+  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      await processFiles(e.target.files)
+      // Reset input value to allow selecting the same file again
+      e.target.value = ''
+    }
+  }, [processFiles])
+
+  const removeFile = useCallback((indexToRemove: number) => {
+    setFiles((prevFiles) => {
+      const fileToRemove = prevFiles[indexToRemove]
+      if (fileToRemove.preview) {
+        URL.revokeObjectURL(fileToRemove.preview)
+      }
+      const newFiles = prevFiles.filter((_, index) => index !== indexToRemove)
+      onFilesSelected(newFiles)
+      return newFiles
+    })
+  }, [setFiles, onFilesSelected])
+
+  const renderFilePreview = (file: FileWithPreview) => {
+    if (file.type.startsWith('image/') && file.preview) {
+      return (
+        <img
+          src={file.preview}
+          alt={file.name}
+          className="w-full h-full object-cover rounded-lg"
+        />
+      )
+    }
+
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-muted rounded-lg">
+        {file.type === 'application/pdf' ? (
+          <FileText className="h-8 w-8 text-muted-foreground" />
+        ) : (
+          <ImageIcon className="h-8 w-8 text-muted-foreground" />
+        )}
+      </div>
+    )
+  }
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-4">
-      <div
-        {...getRootProps()}
-        className={`p-6 sm:p-8 border-2 border-dashed rounded-xl cursor-pointer 
-          transition-all duration-300 ease-in-out transform
-          ${isDragActive 
-            ? 'border-primary-blue bg-primary-blue/10 dark:bg-primary-purple/10 scale-[1.02] shadow-lg' 
-            : 'border-secondary-gray hover:border-primary-blue dark:hover:border-dark-accent'}
-          bg-secondary-light dark:bg-dark-card
-          touch-manipulation relative
-          ${isConverting ? 'pointer-events-none opacity-70' : ''}`}
-      >
-        <input {...getInputProps()} />
-        
-        {files.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-4 py-8 transition-transform duration-200">
-            <Upload className={`w-12 h-12 transition-colors duration-200 ${
-              isDragActive ? 'text-violet-500' : 'text-gray-400'
-            }`} />
-            {isDragActive ? (
-              <p className="text-lg font-medium text-violet-500 animate-bounce">
-                Drop your files here...
-              </p>
-            ) : (
-              <>
-                <p className="text-lg font-medium text-gray-700 dark:text-gray-200">
-                  Drag & drop your files here
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  or click to select files
-                </p>
-                <p className="text-xs text-gray-400 dark:text-gray-500">
-                  Supports: Images (PNG, JPG, GIF, BMP)
-                </p>
-              </>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-6 animate-fade-in">
-            {/* Preview Grid */}
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4">
-              {files.map((file, index) => (
-                <div 
-                  key={`${file.name}-${index}`} 
-                  className="relative group animate-fade-in"
-                >
-                  <div className="w-[80%] aspect-square mx-auto">
-                    {file.type.startsWith('image/') ? (
-                      <div className="relative w-full h-full rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-sm transition-transform duration-200 group-hover:scale-[1.02]">
-                        <img
-                          src={previews[index]}
-                          alt={file.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full h-full rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                        <File className="w-8 h-8 text-gray-400" />
-                      </div>
-                    )}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeFile(index);
-                      }}
-                      className="absolute -top-1.5 -right-1.5 w-5 h-5 
-                        bg-red-500 text-white rounded-full 
-                        opacity-0 group-hover:opacity-100 
-                        transition-all duration-200 ease-in-out
-                        transform hover:scale-110
-                        flex items-center justify-center
-                        shadow-md"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                  <div className="mt-2 text-center">
-                    <p className="text-xs truncate max-w-[80px] mx-auto" 
-                       title={file.name}>
-                      {file.name.length > 12 
-                        ? `${file.name.slice(0, 10)}...` 
-                        : file.name}
-                    </p>
-                    <p className="text-[10px] text-gray-500 dark:text-gray-400">
-                      {(file.size / 1024 / 1024).toFixed(2)} MB
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+    <div
+      ref={dropZoneRef}
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className={cn(
+        'relative rounded-lg transition-colors',
+        showInBox && 'border-2 border-dashed p-4',
+        isDragging && 'border-primary bg-primary/5',
+        !showInBox && 'border-transparent'
+      )}
+    >
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        onChange={handleFileSelect}
+        accept={acceptedFileTypes.join(',')}
+        className="hidden"
+      />
 
-            {/* Drop more files message */}
-            <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-              <span className="hidden sm:inline">Drop more files or click to add more</span>
-              <span className="sm:hidden">Tap to add more files</span>
-            </p>
+      <div className="grid gap-4">
+        {/* Upload Area */}
+        <div className="flex flex-col items-center justify-center gap-4 py-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            Select Files
+          </Button>
+          <p className="text-sm text-muted-foreground text-center">
+            or drag and drop files here
+          </p>
+        </div>
+
+        {/* File Previews */}
+        {files.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {files.map((file, index) => (
+              <div
+                key={`${file.name}-${index}`}
+                className="relative group aspect-square"
+              >
+                <div className={cn(
+                  'relative w-full h-full rounded-lg overflow-hidden border bg-background',
+                  previewSizeClasses[previewSize]
+                )}>
+                  {renderFilePreview(file)}
+                  <button
+                    type="button"
+                    onClick={() => removeFile(index)}
+                    className="absolute top-1 right-1 p-1 rounded-full bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground truncate">
+                  {file.name}
+                </p>
+              </div>
+            ))}
           </div>
         )}
       </div>
-
-      {/* Conversion Progress */}
-      {isConverting && (
-        <div className="space-y-2">
-          <ProgressBar 
-            value={convertingProgress} 
-            className="h-1.5 bg-secondary-gray dark:bg-dark-card"
-            barClassName="bg-primary-blue dark:bg-dark-accent"
-          />
-          <p className="text-sm text-center text-gray-600 dark:text-gray-400">
-            Converting... {convertingProgress}%
-          </p>
-        </div>
-      )}
-
-      {/* Convert Button with stable red color */}
-      <button
-        onClick={handleConversion}
-        disabled={isConverting || !files.length}
-        className="w-full py-4 text-sm font-medium text-white 
-          bg-[#FF5733] hover:bg-[#FF4500]
-          dark:bg-[#FF1493] dark:hover:bg-[#FF0066]
-          hover:shadow-lg hover:shadow-[#FF5733]/30
-          dark:hover:shadow-[#FF1493]/30
-          disabled:opacity-50 disabled:cursor-not-allowed 
-          disabled:hover:shadow-none
-          rounded-xl transition-all duration-300 
-          transform hover:scale-[0.99]
-          focus:outline-none focus:ring-2 focus:ring-[#FF5733]/50
-          disabled:bg-gray-400 disabled:dark:bg-gray-600
-          border border-transparent"
-      >
-        {isConverting ? (
-          <>
-            <Loader2 className="inline w-4 h-4 mr-2 animate-spin" />
-            Converting {files.length} {files.length === 1 ? 'Image' : 'Images'} to PDF
-          </>
-        ) : (
-          files.length > 0 
-            ? `Convert ${files.length} ${files.length === 1 ? 'Image' : 'Images'} to PDF`
-            : 'Select images to convert to PDF'
-        )}
-      </button>
     </div>
-  );
-} 
+  )
+}

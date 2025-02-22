@@ -1,26 +1,35 @@
-import type React from "react"
+// app/layout.tsx
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from './theme-provider'
-import { Navigation } from "@/components/navigation"
-import { Footer } from "@/components/footer"
-import { ClientLayout } from './client-layout'
-import { Analytics } from '@vercel/analytics/react';
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/toaster"
+import { Header } from "@/components/shared/Header"
+import { Footer } from "@/components/shared/Footer"
+import { GoogleAnalytics } from '@/components/GoogleAnalytics'
+import Script from 'next/script'
+import { GA_TRACKING_ID } from '@/lib/analytics'
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata: Metadata = {
-  title: 'PDF Kit - Convert Images to PDF',
-  description: 'Free online tool to convert images to PDF with customizable options',
-  keywords: 'pdf converter, image to pdf, online pdf tool, free pdf converter',
-  authors: [{ name: 'PDF Kit Team' }],
-  creator: 'PDF Kit',
-  publisher: 'PDF Kit',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
+export const metadata = {
+  metadataBase: new URL('https://your-domain.com'),
+  title: {
+    default: 'My PDF Kit - Free Online PDF Tools',
+    template: '%s | My PDF Kit'
+  },
+  description: 'Free online PDF tools to merge, split, compress, convert PDFs. Easy to use, no installation required.',
+  keywords: 'pdf tools, pdf editor, merge pdf, split pdf, compress pdf, convert pdf, my pdf kit',
+  authors: [{ name: 'Roshaan Kumar' }],
+  creator: 'Roshaan Kumar',
+  publisher: 'My PDF Kit',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
 }
 
@@ -32,36 +41,39 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="google-adsense-account" content="ca-pub-4504451013594034" />
-        {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-SX6743LDN3"></script>
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-SX6743LDN3');
-          `
-        }} />
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_TRACKING_ID}');
+            `,
+          }}
+        />
       </head>
-      <body className={`${inter.className} antialiased`}>
+      <body className={inter.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <div className="min-h-screen flex flex-col">
-            <Navigation />
-            <main className="flex-grow">
-              <ClientLayout>
-                {children}
-              </ClientLayout>
+          <div className="relative min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-1">
+              {children}
             </main>
             <Footer />
           </div>
+          <Toaster />
         </ThemeProvider>
-        <Analytics />
       </body>
     </html>
   )

@@ -2,9 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
-import { initEmailJS } from '../utils/emailjs-init';
+import { initEmailJS } from '@/utils/emailjs-init';
+import { useToast } from "@/components/ui/use-toast"
 
 export default function ContactPage() {
+  const { toast } = useToast()
+  
   useEffect(() => {
     initEmailJS();
   }, []);
@@ -37,9 +40,20 @@ export default function ContactPage() {
 
       setStatus('sent');
       setFormData({ name: '', email: '', subject: '', message: '' });
+      
+      toast({
+        title: "Success",
+        description: "Message sent successfully!",
+      })
     } catch (error) {
       console.error('Error sending email:', error);
       setStatus('error');
+      
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive"
+      })
     }
   };
 
@@ -123,13 +137,6 @@ export default function ContactPage() {
           >
             {status === 'sending' ? 'Sending...' : 'Send Message'}
           </button>
-
-          {status === 'sent' && (
-            <p className="text-green-500 text-center">Message sent successfully!</p>
-          )}
-          {status === 'error' && (
-            <p className="text-red-500 text-center">Error sending message. Please try again.</p>
-          )}
         </form>
       </div>
 
@@ -145,7 +152,14 @@ export default function ContactPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
           <h2 className="text-xl font-semibold mb-4">Connect With Me</h2>
           <div className="space-y-2">
-            <a href="https://www.linkedin.com/in/roshaankumar/" target="_blank" rel="noopener noreferrer" className="block text-blue-500 hover:text-blue-600">LinkedIn</a>
+            <a 
+              href="https://www.linkedin.com/in/roshaankumar/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="block text-blue-500 hover:text-blue-600"
+            >
+              LinkedIn
+            </a>
           </div>
         </div>
       </div>

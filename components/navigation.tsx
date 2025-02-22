@@ -1,53 +1,125 @@
-import Link from 'next/link';
-import { ThemeToggle } from './theme-toggle';
+"use client"
+
+import { useState } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
+import { Menu, X, FileText, Image as ImageIcon, Home, Sun, Moon } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { useTheme } from 'next-themes'
+
+interface NavItem {
+  label: string
+  href: string
+  icon: JSX.Element
+}
+
+const navItems: NavItem[] = [
+  {
+    label: 'Home',
+    href: '/',
+    icon: <Home className="h-4 w-4" />
+  },
+  {
+    label: 'PDF Tools',
+    href: '/tools/pdf',
+    icon: <FileText className="h-4 w-4" />
+  },
+  {
+    label: 'Image Tools',
+    href: '/tools/image',
+    icon: <ImageIcon className="h-4 w-4" />
+  }
+]
 
 export function Navigation() {
+  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
+  const { theme, setTheme } = useTheme()
+
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow-lg">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold text-gray-900 dark:text-white">
-              My PDF Kit
-            </Link>
-          </div>
-
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-              Home
-            </Link>
-            <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-              About
-            </Link>
-            <Link href="/contact" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-              Contact
-            </Link>
-            <ThemeToggle />
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center justify-between">
+        <div className="flex items-center">
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+              >
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle Menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="pr-0">
+              <SheetHeader className="px-4">
+                <SheetTitle>Navigation</SheetTitle>
+              </SheetHeader>
+              <nav className="flex flex-col gap-2 p-4">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={cn(
+                      'flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary',
+                      pathname === item.href
+                        ? 'text-primary'
+                        : 'text-muted-foreground'
+                    )}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+          <Link href="/" className="mr-6 flex items-center space-x-2">
+            <FileText className="h-6 w-6" />
+            <span className="hidden font-bold sm:inline-block">
+              PDF Kit
+            </span>
+          </Link>
+          <nav className="hidden md:flex md:items-center md:gap-6">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary',
+                  pathname === item.href
+                    ? 'text-primary'
+                    : 'text-muted-foreground'
+                )}
+              >
+                {item.icon}
+                {item.label}
+              </Link>
+            ))}
+          </nav>
         </div>
-
-        {/* Mobile menu */}
-        <div className="hidden md:hidden">
-          <Link href="/" className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-            Home
-          </Link>
-          <Link href="/about" className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-            About
-          </Link>
-          <Link href="/contact" className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-            Contact
-          </Link>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Toggle Theme"
+            className="mr-6"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          >
+            <Sun className="h-6 w-6 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-6 w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle Theme</span>
+          </Button>
         </div>
       </div>
-    </nav>
-  );
+    </header>
+  )
 }

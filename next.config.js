@@ -5,15 +5,12 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  output: 'standalone',
-  typescript: {
-    // Don't fail build on TypeScript errors during deployment
-    ignoreBuildErrors: true,
+  webpack: (config) => {
+    config.resolve.alias.canvas = false;
+    return config;
   },
-  eslint: {
-    // Don't fail build on ESLint errors during deployment
-    ignoreDuringBuilds: true,
-  },
+  // Remove the output: 'export' if you want to use middleware
+  // or remove middleware if you need static export
 }
 
 module.exports = nextConfig

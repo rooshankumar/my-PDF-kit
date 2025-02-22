@@ -1,204 +1,104 @@
-'use client'
+"use client"
 
-import { useState, useCallback } from 'react'
-import Image from 'next/image'
-import { useTheme } from 'next-themes'
-import { DragDropFile } from '@/components/DragDropFile'
-import { Toaster } from 'sonner'
-import { jsPDF } from 'jspdf'
-import { Sun, Moon } from 'lucide-react'
+import { motion } from "framer-motion"
+import { Card } from "@/components/ui/card"
+import {
+  FileIcon,
+  SplitIcon,
+  MergeIcon,
+  ImageIcon,
+  ShrinkIcon,
+  FileOutput,
+  FileInput,
+  Images
+} from "lucide-react"
+import Link from "next/link"
 
-interface ConversionSettings {
-  pageSize: 'a4' | 'a3' | 'letter'
-  orientation: 'portrait' | 'landscape'
-  compression: 'none' | 'medium' | 'high'
+interface Feature {
+  title: string
+  description: string
+  icon: React.ReactNode
+  href: string
 }
 
-interface PreviewImage {
-  url: string
-  name: string
-  file: File
-}
-
-export default function Home() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<boolean>(false)
-  const [previews, setPreviews] = useState<PreviewImage[]>([])
-  const { theme, setTheme } = useTheme()
-  const [settings, setSettings] = useState<ConversionSettings>({
-    pageSize: 'a4',
-    orientation: 'portrait',
-    compression: 'medium'
-  })
-
-  const handleFiles = useCallback((files: File[]) => {
-    const imageFiles = Array.from(files).filter(file => {
-      const extension = file.name.toLowerCase().split('.').pop()
-      const validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']
-      return file.type.startsWith('image/') || validExtensions.includes(extension || '')
-    })
-
-    if (imageFiles.length === 0) {
-      setError('Please select valid image files (JPG, PNG, GIF, WebP, or BMP)')
-      return
-    }
-
-    setError(null)
-
-    imageFiles.forEach(file => {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        if (reader.result && typeof reader.result === 'string') {
-          setPreviews(prev => [...prev, {
-            url: reader.result as string,
-            name: file.name,
-            file: file
-          }])
-        }
-      }
-      reader.readAsDataURL(file)
-    })
-  }, [])
-
-  const handleFileSelect = (files: File[]) => {
-    console.log('Selected files:', files);
+const features: Feature[] = [
+  {
+    title: "JPG to PDF",
+    description: "Convert and compress images to PDF format with ease",
+    icon: <FileInput className="w-8 h-8 text-blue-500" />,
+    href: "/image/to-pdf"
+  },
+  {
+    title: "PDF to JPG",
+    description: "Convert PDF pages to compressed JPG images with high quality",
+    icon: <FileOutput className="w-8 h-8 text-green-500" />,
+    href: "/pdf/to-images"
+  },
+  {
+    title: "Compress PDF",
+    description: "Reduce PDF file size while maintaining quality and readability",
+    icon: <ShrinkIcon className="w-8 h-8 text-purple-500" />,
+    href: "/pdf/compress"
+  },
+  {
+    title: "Compress Images",
+    description: "Compress JPG, PNG, JPEG images with quality control and flexibility",
+    icon: <Images className="w-8 h-8 text-orange-500" />,
+    href: "/image/compress"
+  },
+  {
+    title: "Merge PDFs",
+    description: "Combine multiple PDFs into one document with ease and precision",
+    icon: <MergeIcon className="w-8 h-8 text-red-500" />,
+    href: "/pdf/merge"
+  },
+  {
+    title: "Split PDF",
+    description: "Split large PDF documents into smaller files by pages",
+    icon: <SplitIcon className="w-8 h-8 text-yellow-500" />,
+    href: "/pdf/split"
   }
+]
 
-  const removeImage = (index: number) => {
-    setPreviews(prev => prev.filter((_, i) => i !== index))
-  }
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (previews.length === 0) {
-      setError('Please select at least one image')
-      return
-    }
-    setIsLoading(true)
-    setError(null)
-    setSuccess(false)
-
-    try {
-      const formData = new FormData()
-      
-      previews.forEach((preview) => {
-        formData.append('file', preview.file)
-      })
-
-      Object.entries(settings).forEach(([key, value]) => {
-        formData.append(key, value)
-      })
-
-      const response = await fetch('/api/convert', {
-        method: 'POST',
-        body: formData,
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Conversion failed')
-      }
-
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'converted.pdf'
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
-      
-      setSuccess(true)
-      setPreviews([]) // Clear previews after successful conversion
-      setTimeout(() => setSuccess(false), 5000) // Hide success message after 5 seconds
-
-    } catch (error) {
-      console.error('Error:', error)
-      setError(error instanceof Error ? error.message : 'Failed to convert images')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleConversion = async (files: File[]): Promise<Blob> => {
-    const formData = new FormData()
-    files.forEach(file => formData.append('files', file))
-    formData.append('pageSize', settings.pageSize)
-    formData.append('orientation', settings.orientation)
-    formData.append('compression', settings.compression)
-
-    const response = await fetch('/api/convert', {
-      method: 'POST',
-      body: formData
-    })
-
-    if (!response.ok) {
-      throw new Error('Conversion failed')
-    }
-
-    return response.blob()
-  }
-
+export default function HomePage() {
   return (
-    <main className="min-h-screen bg-secondary-light dark:bg-dark-bg text-gray-900 dark:text-white transition-colors duration-300">
-      <div className="container mx-auto px-4 py-6">
-        <h1 className="text-3xl font-bold mb-8 text-center">Convert Images to PDF</h1>
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="grid grid-cols-3 gap-4">
-            <select 
-              value={settings.pageSize}
-              onChange={(e) => setSettings({...settings, pageSize: e.target.value as 'a4' | 'a3' | 'letter'})}
-              className="px-4 py-2.5 text-sm bg-white dark:bg-zinc-800 
-                border border-gray-300 dark:border-gray-700 
-                text-gray-900 dark:text-gray-100 rounded-lg 
-                focus:ring-2 focus:ring-[#FF5733]/20 focus:border-[#FF5733]
-                transition-colors duration-150"
-            >
-              <option value="a4">A4</option>
-              <option value="a3">A3</option>
-              <option value="letter">Letter</option>
-            </select>
-
-            <select 
-              value={settings.orientation}
-              onChange={(e) => setSettings({...settings, orientation: e.target.value as 'portrait' | 'landscape'})}
-              className="px-4 py-2.5 text-sm bg-white dark:bg-zinc-800 
-                border border-gray-300 dark:border-gray-700 
-                text-gray-900 dark:text-gray-100 rounded-lg 
-                focus:ring-2 focus:ring-[#FF5733]/20 focus:border-[#FF5733]
-                transition-colors duration-150"
-            >
-              <option value="portrait">Portrait</option>
-              <option value="landscape">Landscape</option>
-            </select>
-
-            <select 
-              value={settings.compression}
-              onChange={(e) => setSettings({...settings, compression: e.target.value as 'none' | 'medium' | 'high'})}
-              className="px-4 py-2.5 text-sm bg-white dark:bg-zinc-800 
-                border border-gray-300 dark:border-gray-700 
-                text-gray-900 dark:text-gray-100 rounded-lg 
-                focus:ring-2 focus:ring-[#FF5733]/20 focus:border-[#FF5733]
-                transition-colors duration-150"
-            >
-              <option value="none">No Compression</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-
-          <DragDropFile 
-            onFileSelect={handleFileSelect}
-            onConvert={handleConversion}
-          />
-        </div>
+    <div className="container py-8 md:py-12">
+      <div className="mx-auto flex max-w-[980px] flex-col items-center gap-8 text-center">
+        <motion.h1 
+          className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Welcome to My PDF Kit
+        </motion.h1>
+        <motion.p 
+          className="max-w-[750px] text-lg text-muted-foreground sm:text-xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          Easy-to-use tools to convert, compress, and manipulate your PDFs and images. No registration required.
+        </motion.p>
       </div>
-      <Toaster 
-        theme={theme as 'light' | 'dark'} 
-        position="bottom-right"
-      />
-    </main>
+      <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3 mt-8">
+        {features.map((feature, index) => (
+          <motion.div
+            key={feature.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+          >
+            <Link href={feature.href}>
+              <Card className="p-6 hover:bg-muted/50 transition-colors">
+                <div className="mb-4">{feature.icon}</div>
+                <h3 className="mb-2 font-semibold">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground">{feature.description}</p>
+              </Card>
+            </Link>
+          </motion.div>
+        ))}
+      </div>
+    </div>
   )
 }
