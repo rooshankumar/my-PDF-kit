@@ -13,20 +13,10 @@ import { PDFDocument } from 'pdf-lib'
 import JSZip from 'jszip'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 
-interface PDFToolsState {
-  files: FileWithPreview[],
-  isProcessing: boolean,
-  fileSize: string,
-  updateMetadata?: boolean; // Added updateMetadata as an optional boolean property
-}
-
 export default function PDFTools() {
-  const [state, setState] = useState<PDFToolsState>({
-    files: [],
-    isProcessing: false,
-    fileSize: '',
-    updateMetadata: false  // Initialize as needed
-  });
+  const [files, setFiles] = useState<FileWithPreview[]>([])
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [fileSize, setFileSize] = useState<string>('')
 
   const formatBytes = (bytes: number) => {
     if (bytes === 0) return '0 Bytes'
@@ -37,63 +27,61 @@ export default function PDFTools() {
   }
 
   const handleFilesSelected = (selectedFiles: FileWithPreview[]) => {
-    setState(prev => ({
-      ...prev,
-      files: selectedFiles,
-      fileSize: selectedFiles.length > 0 ? formatBytes(selectedFiles[0].file.size) : ''
-    }))
+    setFiles(selectedFiles)
+    if (selectedFiles.length > 0) {
+      setFileSize(formatBytes(selectedFiles[0].file.size))
+    }
   }
 
   const handleRemoveFile = (index: number) => {
-    setState(prev => {
-      const newFiles = prev.files.filter((_, i) => i !== index)
-      return {
-        ...prev,
-        files: newFiles,
-        fileSize: newFiles.length > 0 ? formatBytes(newFiles[0].file.size) : ''
+    setFiles(prev => {
+      const newFiles = prev.filter((_, i) => i !== index)
+      if (newFiles.length > 0) {
+        setFileSize(formatBytes(newFiles[0].file.size))
+      } else {
+        setFileSize('')
       }
+      return newFiles
     })
   }
 
   const handleQuickConvert = async (mode: 'compress' | 'split' | 'merge') => {
-    if (!state.files.length) return
-    setState(prev => ({ ...prev, isProcessing: true }))
+    if (!files.length) return
+    setIsProcessing(true)
 
     try {
       switch (mode) {
         case 'compress': {
-          const file = state.files[0].file
+          const file = files[0].file
           const arrayBuffer = await file.arrayBuffer()
           const pdfDoc = await PDFDocument.load(arrayBuffer)
           const compressedPdf = await pdfDoc.save({
             useObjectStreams: true,
-            updateMetadata: state.updateMetadata,  // Use state.updateMetadata here
+            updateMetadata: false,
             useCompression: true
           })
           const blob = new Blob([compressedPdf], { type: 'application/pdf' })
+          const compressedSize = formatBytes(blob.size)
           const url = URL.createObjectURL(blob)
 
           // Create download link
           const a = document.createElement('a')
           a.href = url
-          a.download = `compressed-${state.files[0].name}`
+          a.download = `compressed-${files[0].name}`
           document.body.appendChild(a)
           a.click()
           document.body.removeChild(a)
           URL.revokeObjectURL(url)
 
           // Update displayed file size
-          setState(prev => ({
-            ...prev,
-            fileSize: `Original: ${formatBytes(file.size)} → Compressed: ${formatBytes(blob.size)}`
-          }))
+          setFileSize(`Original: ${formatBytes(file.size)} → Compressed: ${compressedSize}`)
           break
         }
 
         case 'split': {
           const zip = new JSZip()
 
-          for (const file of state.files) {
+          for (const file of files) {
             const arrayBuffer = await file.arrayBuffer()
             const pdfDoc = await PDFDocument.load(arrayBuffer)
             const totalPages = pdfDoc.getPageCount()
@@ -126,7 +114,7 @@ export default function PDFTools() {
 
         case 'merge': {
           const mergedPdf = await PDFDocument.create()
-          for (const file of state.files) {
+          for (const file of files) {
             const buffer = await file.file.arrayBuffer()
             const doc = await PDFDocument.load(buffer)
             const pages = await mergedPdf.copyPages(doc, doc.getPageIndices())
@@ -148,7 +136,7 @@ export default function PDFTools() {
     } catch (error) {
       console.error('Conversion failed:', error)
     } finally {
-      setState(prev => ({ ...prev, isProcessing: false }))
+      setIsProcessing(false)
     }
   }
 
@@ -158,9 +146,9 @@ export default function PDFTools() {
         {/* File Preview Area */}
         <Card className="p-6">
           <div className="min-h-[300px] rounded-lg border-2 border-dashed border-gray-300 p-4">
-            {state.files.length === 0 ? (
+            {files.length === 0 ? (
               <DragDropFile
-                files={state.files}
+                files={files}
                 setFiles={setFiles}
                 onFilesSelected={handleFilesSelected}
                 acceptedFileTypes={['application/pdf']}
@@ -171,7 +159,7 @@ export default function PDFTools() {
               <div>
                 <div className="grid grid-cols-2 gap-4">
                   <AnimatePresence>
-                    {state.files.map((file, index) => (
+                    {files.map((file, index) => (
                       <motion.div
                         key={`${file.name}-${index}`}
                         initial={{ opacity: 0, scale: 0.8 }}
@@ -197,9 +185,9 @@ export default function PDFTools() {
                           <p className="text-xs text-gray-500 truncate">
                             {file.name}
                           </p>
-                          {index === 0 && state.fileSize && (
+                          {index === 0 && fileSize && (
                             <p className="text-xs text-gray-400">
-                              {state.fileSize}
+                              {fileSize}
                             </p>
                           )}
                         </div>
@@ -222,12 +210,12 @@ export default function PDFTools() {
                   <h3 className="font-medium">Compress PDF</h3>
                   <p className="text-sm text-muted-foreground">
                     Reduce file size while maintaining quality
-                    {state.fileSize && <span className="block text-xs mt-1">{state.fileSize}</span>}
+                    {fileSize && <span className="block text-xs mt-1">{fileSize}</span>}
                   </p>
                 </div>
                 <Button 
                   onClick={() => handleQuickConvert('compress')}
-                  disabled={!state.files.length || state.isProcessing}
+                  disabled={!files.length || isProcessing}
                   size="sm"
                 >
                   <Download className="h-4 w-4 mr-2" />
@@ -240,12 +228,12 @@ export default function PDFTools() {
                   <h3 className="font-medium">Split PDF</h3>
                   <p className="text-sm text-muted-foreground">
                     Split PDF into pages or ranges
-                    {state.files.length > 0 && <span className="block text-xs mt-1">Advanced splitting options available below</span>}
+                    {files.length > 0 && <span className="block text-xs mt-1">Advanced splitting options available below</span>}
                   </p>
                 </div>
                 <Button 
                   onClick={() => handleQuickConvert('split')}
-                  disabled={!state.files.length || state.isProcessing}
+                  disabled={!files.length || isProcessing}
                   size="sm"
                 >
                   <Download className="h-4 w-4 mr-2" />
@@ -258,12 +246,12 @@ export default function PDFTools() {
                   <h3 className="font-medium">Merge PDFs</h3>
                   <p className="text-sm text-muted-foreground">
                     Combine multiple PDFs into one
-                    {state.files.length > 1 && <span className="block text-xs mt-1">Merging {state.files.length} files</span>}
+                    {files.length > 1 && <span className="block text-xs mt-1">Merging {files.length} files</span>}
                   </p>
                 </div>
                 <Button 
                   onClick={() => handleQuickConvert('merge')}
-                  disabled={state.files.length < 2 || state.isProcessing}
+                  disabled={files.length < 2 || isProcessing}
                   size="sm"
                 >
                   <Download className="h-4 w-4 mr-2" />
@@ -284,7 +272,7 @@ export default function PDFTools() {
       {/* Advanced Operations */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold mb-4">Advanced Options</h2>
-        {state.files.length > 0 && (
+        {files.length > 0 && (
           <div className="space-y-6">
             <Tabs defaultValue="split" className="w-full">
               <TabsList>
@@ -293,18 +281,18 @@ export default function PDFTools() {
                 <TabsTrigger value="merge">Merge</TabsTrigger>
               </TabsList>
               <TabsContent value="split">
-                <PDFSplitOptions files={state.files} />
+                <PDFSplitOptions files={files} />
               </TabsContent>
               <TabsContent value="compress">
                 <PDFOperations
-                  files={state.files}
+                  files={files}
                   setFiles={setFiles}
                   mode="compress"
                 />
               </TabsContent>
               <TabsContent value="merge">
                 <PDFOperations
-                  files={state.files}
+                  files={files}
                   setFiles={setFiles}
                   mode="merge"
                 />
