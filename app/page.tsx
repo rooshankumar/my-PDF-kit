@@ -14,7 +14,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { DragDropFile } from '@/components/DragDropFile'
-import { QuickActions } from '@/components/QuickActions'
+import QuickActions from '@/components/QuickActions'
 
 interface Feature {
   title: string
