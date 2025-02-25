@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { Navigation } from '@/components/navigation'
+import { Navigation } from '@/components/navigation' // Ensure this path is correct
 import { Progress } from '@/components/ui/progress'
 import { usePathname } from 'next/navigation'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
