@@ -12,10 +12,15 @@ interface CompressionOptions {
 
 export async function compressPDF(file: File): Promise<File> {
   const originalSize = file.size
+  let pdfDoc: PDFDocument | null = null
   
   try {
     const arrayBuffer = await file.arrayBuffer()
-    const pdfDoc = await PDFDocument.load(arrayBuffer)
+    pdfDoc = await PDFDocument.load(arrayBuffer)
+    
+    if (!pdfDoc || pdfDoc.getPageCount() === 0) {
+      throw new Error('Invalid or empty PDF document');
+    }
 
     // First try with high quality
     const highQualityOptions: CompressionOptions = {
@@ -69,6 +74,14 @@ export async function compressPDF(file: File): Promise<File> {
   } catch (error) {
     console.error('PDF compression failed:', error)
     return file // Return original file if compression fails
+  } finally {
+    // Clean up resources
+    if (pdfDoc) {
+      pdfDoc.save().then(() => {
+        // Force garbage collection of the document
+        (pdfDoc as any) = null
+      })
+    }
   }
 }
 
@@ -78,4 +91,4 @@ function formatFileSize(bytes: number): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-} 
+}
