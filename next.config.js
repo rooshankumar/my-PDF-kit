@@ -5,10 +5,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  output: 'standalone',
-  experimental: {
-    serverActions: true,
-  }
+  output: 'standalone'
 }
 
 module.exports = nextConfig
