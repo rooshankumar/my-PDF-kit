@@ -1,6 +1,6 @@
-
 "use client"
 
+import { motion } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import {
   FileIcon,
@@ -13,7 +13,6 @@ import {
   Images
 } from "lucide-react"
 import Link from "next/link"
-import QuickActions from '@/components/QuickActions'
 
 interface Feature {
   title: string
@@ -27,63 +26,90 @@ const features: Feature[] = [
     title: "JPG to PDF",
     description: "Convert and compress images to PDF format with ease",
     icon: <FileInput className="w-8 h-8 text-blue-500" />,
-    href: "/tools/image/to-pdf"
+    href: "/image/to-pdf"
   },
   {
     title: "PDF to JPG",
     description: "Convert PDF pages to compressed JPG images with high quality",
     icon: <FileOutput className="w-8 h-8 text-green-500" />,
-    href: "/tools/pdf/to-images"
+    href: "/pdf/to-images"
   },
   {
     title: "Compress PDF",
     description: "Reduce PDF file size while maintaining quality and readability",
     icon: <ShrinkIcon className="w-8 h-8 text-purple-500" />,
-    href: "/tools/pdf/compress"
+    href: "/pdf/compress"
   },
   {
     title: "Compress Images",
     description: "Compress JPG, PNG, JPEG images with quality control and flexibility",
     icon: <Images className="w-8 h-8 text-orange-500" />,
-    href: "/tools/image/compress"
+    href: "/image/compress"
   },
   {
     title: "Merge PDFs",
     description: "Combine multiple PDFs into one document with ease and precision",
     icon: <MergeIcon className="w-8 h-8 text-red-500" />,
-    href: "/tools/pdf/merge"
+    href: "/pdf/merge"
   },
   {
     title: "Split PDF",
     description: "Split large PDF documents into smaller files by pages",
     icon: <SplitIcon className="w-8 h-8 text-yellow-500" />,
-    href: "/tools/pdf/split"
+    href: "/pdf/split"
   }
 ]
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-center mb-8">PDF & Image Tools</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {features.map((feature) => (
-          <Link key={feature.title} href={feature.href}>
-            <Card className="p-6 hover:bg-accent transition-colors cursor-pointer h-full">
+    <div className="container mx-auto px-4 py-12">
+      {/* Hero Section */}
+      <section className="text-center mb-16">
+        <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          Your All-in-One PDF Toolkit
+        </h1>
+        <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
+          Convert, compress, and manage your PDFs and images with our powerful, easy-to-use tools.
+        </p>
+      </section>
+
+      {/* Features Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {features.map((feature, index) => (
+          <Link href={feature.href} key={index}>
+            <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
               <div className="flex items-start space-x-4">
-                <div className="p-2 bg-primary/10 rounded-lg">
+                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="font-semibold">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {feature.description}
-                  </p>
+                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
                 </div>
               </div>
             </Card>
           </Link>
         ))}
       </div>
+
+      {/* Benefits Section */}
+      <section className="mt-16 text-center">
+        <h2 className="text-3xl font-bold mb-8">Why Choose Our PDF Tools?</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="p-6">
+            <h3 className="text-xl font-semibold mb-3">Fast & Secure</h3>
+            <p className="text-gray-600 dark:text-gray-300">Process your files quickly with our secure, browser-based tools</p>
+          </div>
+          <div className="p-6">
+            <h3 className="text-xl font-semibold mb-3">Easy to Use</h3>
+            <p className="text-gray-600 dark:text-gray-300">Simple interface designed for the best user experience</p>
+          </div>
+          <div className="p-6">
+            <h3 className="text-xl font-semibold mb-3">Free to Use</h3>
+            <p className="text-gray-600 dark:text-gray-300">Access our core features without any cost</p>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

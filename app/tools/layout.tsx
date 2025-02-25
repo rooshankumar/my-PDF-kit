@@ -1,7 +1,11 @@
-
 "use client"
 
+import { useState } from 'react'
 import { Navigation } from '@/components/navigation'
+import { Progress } from '@/components/ui/progress'
+import { usePathname } from 'next/navigation'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import Link from 'next/link'
 
 export default function ToolsLayout({
   children,
@@ -10,11 +14,7 @@ export default function ToolsLayout({
 }) {
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="border-b">
-        <div className="container flex h-14 items-center">
-          <Navigation />
-        </div>
-      </div>
+      <Navigation />
       <main className="flex-1">{children}</main>
     </div>
   )

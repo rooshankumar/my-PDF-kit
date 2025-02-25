@@ -1,15 +1,17 @@
 // app/layout.tsx
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import './globals.css'
-import { ThemeProvider } from '@/components/theme-provider'
-import Header from '@/components/Header'
-import Footer from '@/components/footer'
+import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/toaster"
+import { Header } from "@/components/shared/Header"
+import { Footer } from "@/components/shared/Footer"
+import { GoogleAnalytics } from '@/components/GoogleAnalytics'
+import { GA_TRACKING_ID } from '@/lib/analytics'
 
+const inter = Inter({ subsets: ["latin"] })
 
-const inter = Inter({ subsets: ['latin'] })
-
-export const metadata: Metadata = {
+export const metadata = {
   metadataBase: new URL('https://your-domain.com'),
   title: {
     default: 'My PDF Kit - Free Online PDF Tools',
@@ -44,11 +46,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <Footer />
+          <div className="relative min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
+          <Toaster />
+          <GoogleAnalytics />
         </ThemeProvider>
       </body>
     </html>
