@@ -1,3 +1,4 @@
+
 "use client"
 
 import { motion } from "framer-motion"
@@ -67,6 +68,25 @@ export default function Home() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold text-center mb-8">PDF & Image Tools</h1>
       <DragDropFile />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+        {features.map((feature) => (
+          <Link key={feature.title} href={feature.href}>
+            <Card className="p-6 hover:bg-accent transition-colors cursor-pointer h-full">
+              <div className="flex items-start space-x-4">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  {feature.icon}
+                </div>
+                <div>
+                  <h3 className="font-semibold">{feature.title}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {feature.description}
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </Link>
+        ))}
+      </div>
       <QuickActions />
     </div>
   )
