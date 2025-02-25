@@ -13,6 +13,8 @@ import {
   Images
 } from "lucide-react"
 import Link from "next/link"
+import { DragDropFile } from '@/components/DragDropFile'
+import { QuickActions } from '@/components/QuickActions'
 
 interface Feature {
   title: string
@@ -60,56 +62,12 @@ const features: Feature[] = [
   }
 ]
 
-export default function HomePage() {
+export default function Home() {
   return (
-    <div className="container mx-auto px-4 py-12">
-      {/* Hero Section */}
-      <section className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6">
-          Your All-in-One PDF Toolkit
-        </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
-          Convert, compress, and manage your PDFs and images with our powerful, easy-to-use tools.
-        </p>
-      </section>
-
-      {/* Features Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {features.map((feature, index) => (
-          <Link href={feature.href} key={index}>
-            <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
-              <div className="flex items-start space-x-4">
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  {feature.icon}
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
-                </div>
-              </div>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
-      {/* Benefits Section */}
-      <section className="mt-16 text-center">
-        <h2 className="text-3xl font-bold mb-8">Why Choose Our PDF Tools?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="p-6">
-            <h3 className="text-xl font-semibold mb-3">Fast & Secure</h3>
-            <p className="text-gray-600 dark:text-gray-300">Process your files quickly with our secure, browser-based tools</p>
-          </div>
-          <div className="p-6">
-            <h3 className="text-xl font-semibold mb-3">Easy to Use</h3>
-            <p className="text-gray-600 dark:text-gray-300">Simple interface designed for the best user experience</p>
-          </div>
-          <div className="p-6">
-            <h3 className="text-xl font-semibold mb-3">Free to Use</h3>
-            <p className="text-gray-600 dark:text-gray-300">Access our core features without any cost</p>
-          </div>
-        </div>
-      </section>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold text-center mb-8">PDF & Image Tools</h1>
+      <DragDropFile />
+      <QuickActions />
     </div>
   )
 }

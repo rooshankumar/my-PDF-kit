@@ -8,11 +8,19 @@ channel = "stable-24_05"
 run = ["sh", "-c", "npm run dev"]
 
 [workflows]
-runButton = "Dev"
+runButton = "Run"
 
 [[workflows.workflow]]
 name = "Dev"
 author = 39984677
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+
+[[workflows.workflow]]
+name = "Run"
+author = 39988229
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
