@@ -1,7 +1,6 @@
 
 "use client"
 
-import { motion } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import {
   FileIcon,
@@ -14,7 +13,6 @@ import {
   Images
 } from "lucide-react"
 import Link from "next/link"
-import { DragDropFile } from '@/components/DragDropFile'
 import QuickActions from '@/components/QuickActions'
 
 interface Feature {
@@ -29,37 +27,37 @@ const features: Feature[] = [
     title: "JPG to PDF",
     description: "Convert and compress images to PDF format with ease",
     icon: <FileInput className="w-8 h-8 text-blue-500" />,
-    href: "/image/to-pdf"
+    href: "/tools/image/to-pdf"
   },
   {
     title: "PDF to JPG",
     description: "Convert PDF pages to compressed JPG images with high quality",
     icon: <FileOutput className="w-8 h-8 text-green-500" />,
-    href: "/pdf/to-images"
+    href: "/tools/pdf/to-images"
   },
   {
     title: "Compress PDF",
     description: "Reduce PDF file size while maintaining quality and readability",
     icon: <ShrinkIcon className="w-8 h-8 text-purple-500" />,
-    href: "/pdf/compress"
+    href: "/tools/pdf/compress"
   },
   {
     title: "Compress Images",
     description: "Compress JPG, PNG, JPEG images with quality control and flexibility",
     icon: <Images className="w-8 h-8 text-orange-500" />,
-    href: "/image/compress"
+    href: "/tools/image/compress"
   },
   {
     title: "Merge PDFs",
     description: "Combine multiple PDFs into one document with ease and precision",
     icon: <MergeIcon className="w-8 h-8 text-red-500" />,
-    href: "/pdf/merge"
+    href: "/tools/pdf/merge"
   },
   {
     title: "Split PDF",
     description: "Split large PDF documents into smaller files by pages",
     icon: <SplitIcon className="w-8 h-8 text-yellow-500" />,
-    href: "/pdf/split"
+    href: "/tools/pdf/split"
   }
 ]
 
@@ -67,8 +65,7 @@ export default function Home() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold text-center mb-8">PDF & Image Tools</h1>
-      <DragDropFile />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {features.map((feature) => (
           <Link key={feature.title} href={feature.href}>
             <Card className="p-6 hover:bg-accent transition-colors cursor-pointer h-full">
@@ -87,7 +84,6 @@ export default function Home() {
           </Link>
         ))}
       </div>
-      <QuickActions />
     </div>
   )
 }

@@ -42,11 +42,13 @@ export function DragDropFile({
   useEffect(() => {
     // Cleanup previews when component unmounts
     return () => {
-      files.forEach(file => {
-        if (file.preview) {
-          URL.revokeObjectURL(file.preview)
-        }
-      })
+      if (files) {
+        files.forEach(file => {
+          if (file.preview) {
+            URL.revokeObjectURL(file.preview)
+          }
+        })
+      }
     }
   }, [files])
 
