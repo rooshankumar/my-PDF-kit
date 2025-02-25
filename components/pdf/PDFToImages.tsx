@@ -1,13 +1,14 @@
+
 "use client"
 
 import { useState } from "react"
 import { FileWithPreview } from "@/types/files"
 import { useToast } from "@/components/ui/use-toast"
-import { FileUpload } from "@/components/FileUpload"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
 import { convertPDFToImages } from "@/lib/pdf/utils"
 import { downloadBlob, createZipFromBlobs } from "@/lib/file-utils"
+import { DragDropFile } from "@/components/DragDropFile"
+import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
 
 export function PDFToImages() {
   const [files, setFiles] = useState<FileWithPreview[]>([])
@@ -21,11 +22,11 @@ export function PDFToImages() {
     setProgress(0)
 
     try {
-      const images = await convertPDFToImages(files[0].file, {
-        format: 'jpeg',
-        quality: 0.9,
-        onProgress: setProgress
-      })
+      const images = await convertPDFToImages(
+        files[0].file,
+        { format: 'jpeg', quality: 0.9 },
+        setProgress
+      )
 
       if (images.length === 1) {
         const fileName = files[0].file.name.replace('.pdf', '.jpg')
@@ -61,12 +62,13 @@ export function PDFToImages() {
 
   return (
     <div className="space-y-4">
-      <FileUpload
+      <DragDropFile
         files={files}
         setFiles={setFiles}
-        accept={["application/pdf"]}
+        onFilesSelected={setFiles}
+        acceptedFileTypes={["application/pdf"]}
         maxFiles={1}
-        multiple={false}
+        showInBox={true}
       />
 
       {files.length > 0 && (
@@ -80,7 +82,7 @@ export function PDFToImages() {
             className="w-full"
           >
             {isProcessing 
-              ? `Converting... ${progress}%` 
+              ? `Converting... ${Math.round(progress)}%` 
               : "Convert to Images"
             }
           </Button>

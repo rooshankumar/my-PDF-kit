@@ -1,8 +1,8 @@
 "use strict";
 
 import { PDFDocument } from 'pdf-lib'
-import JSZip from 'jszip'
 import * as pdfjs from 'pdfjs-dist'
+import JSZip from 'jszip'
 
 // Initialize PDF.js worker using public path
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
@@ -122,26 +122,18 @@ export const splitPDFByPages = async (
   }
 }
 
-export async function mergePDFs(
-  files: File[],
-  onProgress?: (progress: number) => void
-): Promise<Blob> {
-  const pdfDoc = await PDFDocument.create();
-  const totalFiles = files.length;
+export async function mergePDFs(files: File[]): Promise<Blob> {
+  const pdfDoc = await PDFDocument.create()
 
-  for (let i = 0; i < files.length; i++) {
-    const fileData = await files[i].arrayBuffer();
-    const pdf = await PDFDocument.load(fileData);
-    const copiedPages = await pdfDoc.copyPages(pdf, pdf.getPageIndices());
-    copiedPages.forEach((page) => pdfDoc.addPage(page));
-
-    if (onProgress) {
-      onProgress((i + 1) / totalFiles * 100);
-    }
+  for (const file of files) {
+    const arrayBuffer = await file.arrayBuffer()
+    const pdf = await PDFDocument.load(arrayBuffer)
+    const pages = await pdfDoc.copyPages(pdf, pdf.getPageIndices())
+    pages.forEach(page => pdfDoc.addPage(page))
   }
 
-  const mergedPdfBytes = await pdfDoc.save();
-  return new Blob([mergedPdfBytes], { type: 'application/pdf' });
+  const pdfBytes = await pdfDoc.save()
+  return new Blob([pdfBytes], { type: 'application/pdf' })
 }
 
 export const createZipFromBlobs = async (
@@ -168,87 +160,48 @@ export const downloadBlob = (blob: Blob, filename: string) => {
   URL.revokeObjectURL(url)
 }
 
-export const convertPDFToImages = async (
+export async function convertPDFToImages(
   file: File,
-  options: {
-    format?: 'jpeg' | 'png'
-    quality?: number
-    onProgress?: (progress: number) => void
-  } = {}
-): Promise<Blob[]> => {
-  const { format = 'jpeg', quality = 0.8, onProgress } = options
-  const images: Blob[] = []
+  options: { format: 'jpeg' | 'png', quality: number },
+  onProgress?: (progress: number) => void
+): Promise<Blob[]> {
+  const arrayBuffer = await file.arrayBuffer()
+  const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise
+  const pageCount = pdf.numPages
+  const blobs: Blob[] = []
 
-  try {
-    const arrayBuffer = await file.arrayBuffer()
-    const pdf = await PDFDocument.load(arrayBuffer)
-    const totalPages = pdf.getPageCount()
-
-    for (let i = 0; i < totalPages; i++) {
-      // Create a new document for each page
-      const singlePage = await PDFDocument.create()
-      const [copiedPage] = await singlePage.copyPages(pdf, [i])
-      singlePage.addPage(copiedPage)
-
-      // Convert to image using browser's PDF rendering
-      const pdfData = await singlePage.save()
-      const blob = new Blob([pdfData], { type: 'application/pdf' })
-      const imageUrl = URL.createObjectURL(blob)
-
-      // Create an image from the PDF page
-      const img = await createImageFromPDF(imageUrl, format, quality)
-      images.push(img)
-
-      URL.revokeObjectURL(imageUrl)
-      onProgress?.(Math.round(((i + 1) / totalPages) * 100))
-    }
-
-    return images
-  } catch (error) {
-    console.error('PDF to Image conversion failed:', error)
-    throw error
-  }
-}
-
-async function createImageFromPDF(url: string, format: string, quality: number): Promise<Blob> {
-  try {
-    // Load the PDF document using PDF.js
-    const loadingTask = pdfjs.getDocument(url)
-    const pdf = await loadingTask.promise
-    const page = await pdf.getPage(1) // Get the first page
-
-    // Set scale for better quality
+  for (let i = 0; i < pageCount; i++) {
+    const page = await pdf.getPage(i + 1)
     const viewport = page.getViewport({ scale: 2.0 })
-
-    // Create canvas
     const canvas = document.createElement('canvas')
-    canvas.width = viewport.width
-    canvas.height = viewport.height
+    const context = canvas.getContext('2d')
 
-    const ctx = canvas.getContext('2d')
-    if (!ctx) {
+    if (!context) {
       throw new Error('Could not get canvas context')
     }
 
-    // Render PDF page to canvas
+    canvas.height = viewport.height
+    canvas.width = viewport.width
+
     await page.render({
-      canvasContext: ctx,
+      canvasContext: context,
       viewport: viewport
     }).promise
 
-    // Convert canvas to blob
-    return new Promise((resolve, reject) => {
+    const blob = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
-        (blob) => {
-          if (blob) resolve(blob)
-          else reject(new Error('Failed to convert to image'))
+        (b) => {
+          if (!b) reject(new Error('Failed to convert page to image'))
+          else resolve(b)
         },
-        `image/${format}`,
-        quality
+        `image/${options.format}`,
+        options.quality
       )
     })
-  } catch (error) {
-    console.error('PDF rendering error:', error)
-    throw new Error(`Failed to render PDF page: ${error.message}`)
+
+    blobs.push(blob)
+    onProgress?.((i + 1) / pageCount * 100)
   }
+
+  return blobs
 }
