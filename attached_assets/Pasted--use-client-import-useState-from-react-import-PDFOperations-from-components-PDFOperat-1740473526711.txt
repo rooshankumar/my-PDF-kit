@@ -17,7 +17,7 @@ interface PDFToolsState {
   files: FileWithPreview[],
   isProcessing: boolean,
   fileSize: string,
-  updateMetadata?: boolean; // Kept it as is since it's part of the state but not in save
+  updateMetadata?: boolean; // Added updateMetadata as an optional boolean property
 }
 
 export default function PDFTools() {
@@ -67,9 +67,9 @@ export default function PDFTools() {
           const pdfDoc = await PDFDocument.load(arrayBuffer)
           const compressedPdf = await pdfDoc.save({
             useObjectStreams: true,
-            useCompression: true // Removed updateMetadata
+            updateMetadata: state.updateMetadata,  // Use state.updateMetadata here
+            useCompression: true
           })
-
           const blob = new Blob([compressedPdf], { type: 'application/pdf' })
           const url = URL.createObjectURL(blob)
 
@@ -90,7 +90,60 @@ export default function PDFTools() {
           break
         }
 
-        // Add cases for 'split' and 'merge' as in your original code...
+        case 'split': {
+          const zip = new JSZip()
+
+          for (const file of state.files) {
+            const arrayBuffer = await file.arrayBuffer()
+            const pdfDoc = await PDFDocument.load(arrayBuffer)
+            const totalPages = pdfDoc.getPageCount()
+
+            // Create individual PDFs for each page
+            for (let i = 0; i < totalPages; i++) {
+              const newPdfDoc = await PDFDocument.create()
+              const [page] = await newPdfDoc.copyPages(pdfDoc, [i])
+              newPdfDoc.addPage(page)
+              const pdfBytes = await newPdfDoc.save()
+
+              // Add to zip
+              const fileName = file.name.replace('.pdf', '')
+              zip.file(`${fileName}-page-${i + 1}.pdf`, pdfBytes)
+            }
+          }
+
+          // Generate and download zip
+          const zipContent = await zip.generateAsync({ type: 'blob' })
+          const url = URL.createObjectURL(zipContent)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = 'split-pdfs.zip'
+          document.body.appendChild(a)
+          a.click()
+          document.body.removeChild(a)
+          URL.revokeObjectURL(url)
+          break
+        }
+
+        case 'merge': {
+          const mergedPdf = await PDFDocument.create()
+          for (const file of state.files) {
+            const buffer = await file.file.arrayBuffer()
+            const doc = await PDFDocument.load(buffer)
+            const pages = await mergedPdf.copyPages(doc, doc.getPageIndices())
+            pages.forEach(page => mergedPdf.addPage(page))
+          }
+          const pdfBytes = await mergedPdf.save()
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = `merged-document.pdf`
+          document.body.appendChild(a)
+          a.click()
+          document.body.removeChild(a)
+          URL.revokeObjectURL(url)
+          break
+        }
       }
     } catch (error) {
       console.error('Conversion failed:', error)
@@ -227,6 +280,39 @@ export default function PDFTools() {
           </div>
         </Card>
       </div>
+
+      {/* Advanced Operations */}
+      <Card className="p-6">
+        <h2 className="text-lg font-semibold mb-4">Advanced Options</h2>
+        {state.files.length > 0 && (
+          <div className="space-y-6">
+            <Tabs defaultValue="split" className="w-full">
+              <TabsList>
+                <TabsTrigger value="split">Split PDF</TabsTrigger>
+                <TabsTrigger value="compress">Compress</TabsTrigger>
+                <TabsTrigger value="merge">Merge</TabsTrigger>
+              </TabsList>
+              <TabsContent value="split">
+                <PDFSplitOptions files={state.files} />
+              </TabsContent>
+              <TabsContent value="compress">
+                <PDFOperations
+                  files={state.files}
+                  setFiles={setFiles}
+                  mode="compress"
+                />
+              </TabsContent>
+              <TabsContent value="merge">
+                <PDFOperations
+                  files={state.files}
+                  setFiles={setFiles}
+                  mode="merge"
+                />
+              </TabsContent>
+            </Tabs>
+          </div>
+        )}
+      </Card>
     </div>
   )
 }
