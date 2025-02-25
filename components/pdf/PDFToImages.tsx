@@ -23,8 +23,27 @@ export function PDFToImages() {
         throw new Error("No images were generated")
       }
 
-      // Create object URLs for preview
-      const imageUrls = images.map(blob => URL.createObjectURL(blob))
+      // Download all images in a zip file
+      const zip = new JSZip()
+      images.forEach((blob, index) => {
+        zip.file(`page_${index + 1}.jpg`, blob)
+      })
+      
+      const zipBlob = await zip.generateAsync({ type: 'blob' })
+      const downloadUrl = URL.createObjectURL(zipBlob)
+      
+      // Create download link and trigger download
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = `${files[0].name.replace('.pdf', '')}_images.zip`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      toast({
+        title: "Success",
+        description: `PDF converted to ${images.length} images successfully`
+      })
 
       // Download as zip if multiple pages
       if (images.length > 1) {

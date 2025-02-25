@@ -4,8 +4,8 @@ import { PDFDocument } from 'pdf-lib'
 import * as pdfjs from 'pdfjs-dist'
 import JSZip from 'jszip'
 
-// Initialize PDF.js worker using public path
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+// Initialize PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
 
 export const formatBytes = (bytes: number) => {
   if (bytes === 0) return '0 Bytes'
@@ -122,7 +122,8 @@ export const splitPDFByPages = async (
   }
 }
 
-export async function mergePDFs(files: File[]): Promise<Blob> {
+export async function mergePDFs(files: File[], onProgress?: (progress: number) => void): Promise<Blob> {
+  // Merge implementation
   const pdfDoc = await PDFDocument.create()
 
   for (const file of files) {
@@ -160,18 +161,17 @@ export const downloadBlob = (blob: Blob, filename: string) => {
   URL.revokeObjectURL(url)
 }
 
-export async function convertPDFToImages(
+export const convertPDFToImages = async (
   file: File,
-  options: { format: 'jpeg' | 'png', quality: number },
   onProgress?: (progress: number) => void
-): Promise<Blob[]> {
+): Promise<Blob[]> => {
   const arrayBuffer = await file.arrayBuffer()
   const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise
-  const pageCount = pdf.numPages
-  const blobs: Blob[] = []
+  const totalPages = pdf.numPages
+  const results: Blob[] = []
 
-  for (let i = 0; i < pageCount; i++) {
-    const page = await pdf.getPage(i + 1)
+  for (let i = 1; i <= totalPages; i++) {
+    const page = await pdf.getPage(i)
     const viewport = page.getViewport({ scale: 2.0 })
     const canvas = document.createElement('canvas')
     const context = canvas.getContext('2d')
@@ -188,20 +188,18 @@ export async function convertPDFToImages(
       viewport: viewport
     }).promise
 
-    const blob = await new Promise<Blob>((resolve, reject) => {
-      canvas.toBlob(
-        (b) => {
-          if (!b) reject(new Error('Failed to convert page to image'))
-          else resolve(b)
-        },
-        `image/${options.format}`,
-        options.quality
-      )
+    const blob = await new Promise<Blob>((resolve) => {
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob)
+      }, 'image/jpeg', 0.95)
     })
 
-    blobs.push(blob)
-    onProgress?.((i + 1) / pageCount * 100)
+    results.push(blob)
+
+    if (onProgress) {
+      onProgress((i / totalPages) * 100)
+    }
   }
 
-  return blobs
+  return results
 }
