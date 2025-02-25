@@ -1,16 +1,15 @@
+
 "use client"
 
+import Link from "next/link"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import {
   ImageIcon,
-  FileIcon,
+  FileOutput,
   ShrinkIcon,
   ArrowLeftRight,
-  FileOutput,
   Combine
 } from "lucide-react"
-import Link from "next/link"
 
 interface QuickAction {
   title: string
@@ -24,31 +23,25 @@ const quickActions: QuickAction[] = [
     title: "Compress Image",
     description: "Reduce file size while preserving quality",
     icon: <ShrinkIcon className="w-6 h-6" />,
-    href: "/image/compress"
-  },
-  {
-    title: "Resize Image",
-    description: "Change dimensions while maintaining aspect ratio",
-    icon: <ArrowLeftRight className="w-6 h-6" />,
-    href: "/image/resize"
+    href: "/tools/image/compress"
   },
   {
     title: "Convert Format",
     description: "Convert to JPEG, PNG, or WebP",
     icon: <ImageIcon className="w-6 h-6" />,
-    href: "/image/convert"
+    href: "/tools/image/convert"
   },
   {
     title: "Convert to PDF",
     description: "Convert image to PDF document",
     icon: <FileOutput className="w-6 h-6" />,
-    href: "/image/to-pdf"
+    href: "/tools/image/to-pdf"
   },
   {
     title: "Merge to PDF",
     description: "Combine multiple images into a single PDF",
     icon: <Combine className="w-6 h-6" />,
-    href: "/image/merge-pdf"
+    href: "/tools/image/merge-pdf"
   }
 ]
 
