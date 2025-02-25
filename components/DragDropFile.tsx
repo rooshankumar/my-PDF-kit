@@ -33,8 +33,11 @@ export function DragDropFile({
   const dropZoneRef = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
 
-  // 1cm is approximately 38px
-  const previewSize = 'w-[38px] h-[38px]'
+  const previewSizeClasses = {
+    small: 'w-8 h-8',
+    medium: 'w-10 h-10',
+    large: 'w-12 h-12'
+  }
 
   useEffect(() => {
     // Cleanup previews when component unmounts
@@ -244,13 +247,19 @@ export function DragDropFile({
 
         {/* File Previews */}
         {files.length > 0 && (
-          <div className="grid grid-cols-6 gap-2 max-h-[200px] overflow-y-auto p-2">
+          <div className={cn("grid gap-2", {
+            'grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12': previewSize !== 'small',
+            'grid-cols-4': previewSize === 'small'
+          })}>
             {files.map((file, index) => (
               <div
                 key={`${file.name}-${index}`}
                 className="relative group aspect-square"
               >
-                <div className="relative w-[38px] h-[38px] rounded-lg overflow-hidden border bg-background">
+                <div className={cn(
+                  'relative w-full h-full rounded-lg overflow-hidden border bg-background',
+                  previewSizeClasses[previewSize]
+                )}>
                   {renderFilePreview(file)}
                   <button
                     type="button"

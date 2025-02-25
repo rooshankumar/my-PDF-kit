@@ -111,7 +111,7 @@ export function PDFToImages() {
         acceptedFileTypes={['application/pdf']}
         maxFileSize={50}
         showInBox={true}
-        showInBox={true}
+        previewSize="small"
       />
 
       {files.length > 0 && (
