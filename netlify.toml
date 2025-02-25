@@ -2,9 +2,9 @@
 [build]
   command = "npm run build"
   publish = "out"
-  
+
 [build.environment]
-  NODE_VERSION = "20.0.0"
+  NODE_VERSION = "20.5.0"
   NPM_VERSION = "10.2.3"
 
 [[plugins]]
