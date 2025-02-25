@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -26,7 +25,7 @@ export function PDFToImages() {
 
       // Create object URLs for preview
       const imageUrls = images.map(blob => URL.createObjectURL(blob))
-      
+
       // Download as zip if multiple pages
       if (images.length > 1) {
         const zip = new JSZip()
@@ -73,14 +72,22 @@ export function PDFToImages() {
     }
   }
 
+  const handleFilesSelected = (newFiles: FileWithPreview[]) => {
+    // Placeholder for potential additional file handling logic.
+    console.log("Selected files:", newFiles);
+  };
+
   return (
     <div className="space-y-6">
       <DragDropFile
         files={files}
         setFiles={setFiles}
-        accept={["application/pdf"]}
-        maxFiles={1}
-        multiple={false}
+        onFilesSelected={(newFiles) => {
+          setFiles(newFiles);
+          handleFilesSelected(newFiles);
+        }}
+        acceptedFileTypes={['application/pdf']}
+        maxFileSize={50}
         showInBox={true}
         previewSize="small"
       />
@@ -94,7 +101,7 @@ export function PDFToImages() {
           >
             {isProcessing ? 'Converting...' : 'Convert to Images'}
           </Button>
-          
+
           {isProcessing && (
             <Progress value={progress} className="w-full" />
           )}
