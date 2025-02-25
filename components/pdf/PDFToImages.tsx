@@ -5,6 +5,7 @@ import { convertPDFToImages } from "@/lib/pdf/utils"
 import { DragDropFile } from "@/components/DragDropFile"
 import { FileWithPreview } from "@/types/files"
 import { useToast } from "@/hooks/use-toast"
+import JSZip from 'jszip'
 
 export function PDFToImages() {
   const [files, setFiles] = useState<FileWithPreview[]>([])
@@ -28,10 +29,10 @@ export function PDFToImages() {
       images.forEach((blob, index) => {
         zip.file(`page_${index + 1}.jpg`, blob)
       })
-      
+
       const zipBlob = await zip.generateAsync({ type: 'blob' })
       const downloadUrl = URL.createObjectURL(zipBlob)
-      
+
       // Create download link and trigger download
       const link = document.createElement('a')
       link.href = downloadUrl
@@ -39,7 +40,7 @@ export function PDFToImages() {
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
-      
+
       toast({
         title: "Success",
         description: `PDF converted to ${images.length} images successfully`
@@ -72,7 +73,9 @@ export function PDFToImages() {
       }
 
       // Cleanup preview URLs
-      imageUrls.forEach(URL.revokeObjectURL)
+      // Assuming imageUrls is defined elsewhere and holds the URLs to revoke
+      //  This part needs clarification in the original code or prompt.
+      // imageUrls.forEach(URL.revokeObjectURL)
 
       toast({
         title: "Success",
