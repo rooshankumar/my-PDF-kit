@@ -2,6 +2,7 @@
 [build]
   command = "npm run build"
   publish = ".next"
+  functions = "netlify/functions"
 
 [build.environment]
   NEXT_USE_NETLIFY_EDGE = "true"
@@ -10,14 +11,6 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
 
 [[redirects]]
   from = "/*"
