@@ -4,11 +4,8 @@ import { PDFDocument } from 'pdf-lib'
 import JSZip from 'jszip'
 import * as pdfjs from 'pdfjs-dist'
 
-// Initialize PDF.js worker using local worker file
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
-  import.meta.url,
-).toString()
+// Initialize PDF.js worker using public path
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
 
 export const formatBytes = (bytes: number) => {
   if (bytes === 0) return '0 Bytes'
