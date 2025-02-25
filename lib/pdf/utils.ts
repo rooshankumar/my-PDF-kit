@@ -1,3 +1,5 @@
+"use strict";
+
 import { PDFDocument } from 'pdf-lib'
 import JSZip from 'jszip'
 import * as pdfjs from 'pdfjs-dist'
@@ -115,58 +117,34 @@ export const splitPDFByPages = async (
 
       // Clean up individual split document
       (newPdfDoc as any) = null;
-
-  return results
+    }
+    return results
+  } catch (error) {
+    console.error("Error splitting PDF:", error);
+    throw error;
+  }
 }
 
-export const mergePDFs = async (
+export async function mergePDFs(
   files: File[],
   onProgress?: (progress: number) => void
-): Promise<Blob> => {
-  if (!files.length) {
-    throw new Error('No files provided for merging');
-  }
+): Promise<Blob> {
+  const pdfDoc = await PDFDocument.create();
+  const totalFiles = files.length;
 
-  let mergedDoc: PDFDocument | null = null;
-  const compressedFiles: Blob[] = [];
+  for (let i = 0; i < files.length; i++) {
+    const fileData = await files[i].arrayBuffer();
+    const pdf = await PDFDocument.load(fileData);
+    const copiedPages = await pdfDoc.copyPages(pdf, pdf.getPageIndices());
+    copiedPages.forEach((page) => pdfDoc.addPage(page));
 
-  try {
-    // First compress each file
-    for (let i = 0; i < files.length; i++) {
-      const compressed = await compressPDF(files[i])
-      compressedFiles.push(compressed)
-      onProgress?.(Math.round((i + 1) / files.length * 40))
+    if (onProgress) {
+      onProgress((i + 1) / totalFiles * 100);
     }
-
-    // Create merged document
-    mergedDoc = await PDFDocument.create()
-    
-    // Merge compressed PDFs
-    for (let i = 0; i < compressedFiles.length; i++) {
-      const fileArrayBuffer = await compressedFiles[i].arrayBuffer()
-      const pdf = await PDFDocument.load(fileArrayBuffer)
-      
-      if (!pdf || pdf.getPageCount() === 0) {
-        throw new Error(`Invalid or empty PDF document at index ${i}`);
-      }
-
-      const pages = await mergedDoc.copyPages(pdf, pdf.getPageIndices())
-      pages.forEach(page => mergedDoc.addPage(page))
-      onProgress?.(40 + Math.round((i + 1) / files.length * 40))
-      
-      // Clean up individual PDF document
-      (pdf as any) = null;
-
-    // Final compression of merged document
-    const originalSize = files.reduce((acc, file) => acc + file.size, 0)
-    const mergedBytes = await getOptimalCompression(mergedDoc, originalSize)
-    onProgress?.(100)
-
-    return new Blob([mergedBytes], { type: 'application/pdf' })
-  } catch (error) {
-    console.error('PDF merge failed:', error)
-    throw error
   }
+
+  const mergedPdfBytes = await pdfDoc.save();
+  return new Blob([mergedPdfBytes], { type: 'application/pdf' });
 }
 
 export const createZipFromBlobs = async (
