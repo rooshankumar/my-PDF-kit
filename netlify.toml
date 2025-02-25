@@ -1,18 +1,15 @@
+
 [build]
   command = "npm run build"
   publish = ".next"
 
-[functions]
-  directory = "netlify/functions"
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [build.environment]
   NEXT_USE_NETLIFY_EDGE = "true"
-  NODE_VERSION = "18.18.0"
-  NPM_VERSION = "9.6.7"
-  GO_VERSION = "1.20"  # Explicitly set a stable Go version
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+  NODE_VERSION = "20.0.0"
+  NPM_VERSION = "10.2.3"
 
 [[redirects]]
   from = "/*"
