@@ -59,7 +59,7 @@ export function DragDropFile({
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    
+
     // Only set isDragging to false if we're leaving the dropzone
     if (e.currentTarget === dropZoneRef.current) {
       setIsDragging(false)
@@ -97,13 +97,13 @@ export function DragDropFile({
     if (file.type.startsWith('image/')) {
       return URL.createObjectURL(file)
     }
-    
+
     if (file.type === 'application/pdf') {
       // For PDFs, we'll return a placeholder. In a production app,
       // you might want to generate a thumbnail using pdf.js
       return ''
     }
-    
+
     return ''
   }, [])
 
@@ -187,7 +187,7 @@ export function DragDropFile({
         <img
           src={file.preview}
           alt={file.name}
-          className="w-full h-full object-cover rounded-lg"
+          className={cn("w-full h-full object-cover rounded-lg", previewSize === 'small' && 'max-w-[40px] max-h-[40px]')}
         />
       )
     }
@@ -247,7 +247,10 @@ export function DragDropFile({
 
         {/* File Previews */}
         {files.length > 0 && (
-          <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
+          <div className={cn("grid gap-2", {
+            'grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12': previewSize !== 'small',
+            'grid-cols-4': previewSize === 'small'
+          })}>
             {files.map((file, index) => (
               <div
                 key={`${file.name}-${index}`}
