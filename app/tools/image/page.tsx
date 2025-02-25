@@ -4,10 +4,11 @@ import { useState } from "react"
 import { ImageCompress } from "@/components/image/ImageCompress"
 import { ImageToPDF } from "@/components/image/ImageToPDF"
 import { FileWithPreview } from "@/types/files"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
+import { ToolLayout } from "@/components/shared/ToolLayout"
+import { ImageIcon } from "lucide-react"
+import { DragDropFile } from "@/components/DragDropFile"
 import { useRouter, useSearchParams } from "next/navigation"
+
 
 export default function ImageToolsPage() {
   const [files, setFiles] = useState<FileWithPreview[]>([])
@@ -27,30 +28,24 @@ export default function ImageToolsPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto py-8 px-4">
-      <Button
-        variant="ghost"
-        onClick={() => router.push('/')}
-        className="mb-6 flex items-center gap-2 -ml-2"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to Home
-      </Button>
-
+    <ToolLayout
+      title="Image Tools"
+      description="Transform and optimize your images with ease"
+      icon={<ImageIcon className="w-8 h-8 text-primary" />}
+    >
       <div className="space-y-4 mb-6">
         <h1 className="text-3xl font-bold">{titles[tool as keyof typeof titles].title}</h1>
         <p className="text-muted-foreground">
           {titles[tool as keyof typeof titles].description}
         </p>
       </div>
-
-      <Card className="p-6">
+      <DragDropFile acceptedTypes="image/*" files={files} setFiles={setFiles} />
         {tool === 'compress' ? (
           <ImageCompress files={files} setFiles={setFiles} />
         ) : (
           <ImageToPDF files={files} setFiles={setFiles} />
         )}
-      </Card>
-    </div>
+
+    </ToolLayout>
   )
 }
