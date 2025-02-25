@@ -34,9 +34,9 @@ export function DragDropFile({
   const { toast } = useToast()
 
   const previewSizeClasses = {
-    small: 'w-20 h-20',
-    medium: 'w-32 h-32',
-    large: 'w-48 h-48'
+    small: 'w-8 h-8',
+    medium: 'w-10 h-10',
+    large: 'w-12 h-12'
   }
 
   useEffect(() => {
@@ -195,9 +195,12 @@ export function DragDropFile({
     return (
       <div className="w-full h-full flex items-center justify-center bg-muted rounded-lg">
         {file.type === 'application/pdf' ? (
-          <FileText className="h-8 w-8 text-muted-foreground" />
+          <div className="relative w-full h-full">
+            <FileText className="absolute inset-0 m-auto h-4 w-4 text-muted-foreground" />
+            <canvas className="absolute inset-0 w-full h-full object-contain opacity-30" />
+          </div>
         ) : (
-          <ImageIcon className="h-8 w-8 text-muted-foreground" />
+          <ImageIcon className="h-4 w-4 text-muted-foreground" />
         )}
       </div>
     )
@@ -244,7 +247,7 @@ export function DragDropFile({
 
         {/* File Previews */}
         {files.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2">
             {files.map((file, index) => (
               <div
                 key={`${file.name}-${index}`}

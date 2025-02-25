@@ -70,14 +70,14 @@ async function getOptimalCompression(pdfDoc: PDFDocument, originalSize: number):
 export const compressPDF = async (file: File): Promise<Blob> => {
   const arrayBuffer = await file.arrayBuffer()
   const pdfDoc = await PDFDocument.load(arrayBuffer)
-  
+
   // Create a new document for compression
   const compressedDoc = await PDFDocument.create()
   const pages = await compressedDoc.copyPages(pdfDoc, pdfDoc.getPageIndices())
   pages.forEach(page => compressedDoc.addPage(page))
 
   const compressedBytes = await getOptimalCompression(compressedDoc, file.size)
-  
+
   // Log compression results
   console.log(`Original size: ${formatBytes(file.size)}`)
   console.log(`Compressed size: ${formatBytes(compressedBytes.length)}`)
@@ -149,11 +149,11 @@ export const createZipFromBlobs = async (
   names: string[]
 ): Promise<Blob> => {
   const zip = new JSZip()
-  
+
   for (let i = 0; i < blobs.length; i++) {
     zip.file(names[i], blobs[i])
   }
-  
+
   return await zip.generateAsync({ type: 'blob' })
 }
 
@@ -219,12 +219,12 @@ async function createImageFromPDF(url: string, format: string, quality: number):
 
     // Set scale for better quality
     const viewport = page.getViewport({ scale: 2.0 })
-    
+
     // Create canvas
     const canvas = document.createElement('canvas')
     canvas.width = viewport.width
     canvas.height = viewport.height
-    
+
     const ctx = canvas.getContext('2d')
     if (!ctx) {
       throw new Error('Could not get canvas context')
