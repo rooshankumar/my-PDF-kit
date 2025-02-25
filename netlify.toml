@@ -4,13 +4,5 @@
   publish = "out"
 
 [build.environment]
-  NODE_VERSION = "20.5.0"
-  NPM_VERSION = "10.2.3"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+  NODE_VERSION = "18.17.0"
+  NPM_VERSION = "9.6.7"
