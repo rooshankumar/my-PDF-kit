@@ -1,70 +1,73 @@
 
-"use client"
+'use client';
 
-import Link from "next/link"
-import { Card } from "@/components/ui/card"
-import {
-  ImageIcon,
-  FileOutput,
-  ShrinkIcon,
-  ArrowLeftRight,
-  Combine
-} from "lucide-react"
+import React from 'react';
+import { Button } from './ui/button';
+import { Download } from 'lucide-react';
 
-interface QuickAction {
-  title: string
-  description: string
-  icon: React.ReactNode
-  href: string
+interface QuickActionsProps {
+  onQuickConvert: (mode: 'compress' | 'split' | 'merge') => void;
+  fileCount: number;
+  fileSize: string;
+  isProcessing: boolean;
 }
 
-const quickActions: QuickAction[] = [
-  {
-    title: "Compress Image",
-    description: "Reduce file size while preserving quality",
-    icon: <ShrinkIcon className="w-6 h-6" />,
-    href: "/tools/image/compress"
-  },
-  {
-    title: "Convert Format",
-    description: "Convert to JPEG, PNG, or WebP",
-    icon: <ImageIcon className="w-6 h-6" />,
-    href: "/tools/image/convert"
-  },
-  {
-    title: "Convert to PDF",
-    description: "Convert image to PDF document",
-    icon: <FileOutput className="w-6 h-6" />,
-    href: "/tools/image/to-pdf"
-  },
-  {
-    title: "Merge to PDF",
-    description: "Combine multiple images into a single PDF",
-    icon: <Combine className="w-6 h-6" />,
-    href: "/tools/image/merge-pdf"
-  }
-]
-
-export default function QuickActions() {
+export function QuickActions({ onQuickConvert, fileCount, fileSize, isProcessing }: QuickActionsProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {quickActions.map((action) => (
-        <Link key={action.title} href={action.href}>
-          <Card className="p-6 hover:bg-accent transition-colors cursor-pointer">
-            <div className="flex items-start space-x-4">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                {action.icon}
-              </div>
-              <div>
-                <h3 className="font-semibold">{action.title}</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {action.description}
-                </p>
-              </div>
-            </div>
-          </Card>
-        </Link>
-      ))}
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-medium">Compress PDF</h3>
+          <p className="text-sm text-muted-foreground">
+            Reduce file size while maintaining quality
+            {fileSize && <span className="block text-xs mt-1">{fileSize}</span>}
+          </p>
+        </div>
+        <Button 
+          onClick={() => onQuickConvert('compress')}
+          disabled={fileCount === 0 || isProcessing}
+          size="sm"
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Convert & Download
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-medium">Split PDF</h3>
+          <p className="text-sm text-muted-foreground">
+            Split PDF into pages or ranges
+            {fileCount > 0 && <span className="block text-xs mt-1">Advanced splitting options available below</span>}
+          </p>
+        </div>
+        <Button 
+          onClick={() => onQuickConvert('split')}
+          disabled={fileCount === 0 || isProcessing}
+          size="sm"
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Quick Split
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-medium">Merge PDFs</h3>
+          <p className="text-sm text-muted-foreground">
+            Combine multiple PDFs into one
+            {fileCount > 1 && <span className="block text-xs mt-1">Merging {fileCount} files</span>}
+          </p>
+        </div>
+        <Button 
+          onClick={() => onQuickConvert('merge')}
+          disabled={fileCount < 2 || isProcessing}
+          size="sm"
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Merge & Download
+        </Button>
+      </div>
     </div>
-  )
+  );
 }
