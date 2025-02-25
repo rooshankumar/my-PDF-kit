@@ -67,7 +67,11 @@ export default function PDFTools() {
           const pdfDoc = await PDFDocument.load(arrayBuffer)
           const compressedPdf = await pdfDoc.save({
             useObjectStreams: true,
-            useCompression: true // Removed updateMetadata
+            addDefaultPage: false,
+            preservePDFFormFields: true,
+            compress: true,
+            imageQuality: 0.8,
+            compressImages: true
           })
 
           const blob = new Blob([compressedPdf], { type: 'application/pdf' })
