@@ -2,8 +2,11 @@ import { PDFDocument } from 'pdf-lib'
 import JSZip from 'jszip'
 import * as pdfjs from 'pdfjs-dist'
 
-// Initialize PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+// Initialize PDF.js worker using local worker file
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url,
+).toString()
 
 export const formatBytes = (bytes: number) => {
   if (bytes === 0) return '0 Bytes'
@@ -88,17 +91,30 @@ export const splitPDFByPages = async (
   file: File,
   pages: number[]
 ): Promise<Blob[]> => {
-  const arrayBuffer = await file.arrayBuffer()
-  const pdfDoc = await PDFDocument.load(arrayBuffer)
-  const results: Blob[] = []
+  let sourcePdfDoc: PDFDocument | null = null;
+  const results: Blob[] = [];
 
-  for (const pageNum of pages) {
-    const newPdfDoc = await PDFDocument.create()
-    const [page] = await newPdfDoc.copyPages(pdfDoc, [pageNum - 1])
-    newPdfDoc.addPage(page)
-    const pdfBytes = await newPdfDoc.save()
-    results.push(new Blob([pdfBytes], { type: 'application/pdf' }))
-  }
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    sourcePdfDoc = await PDFDocument.load(arrayBuffer);
+
+    if (!sourcePdfDoc || sourcePdfDoc.getPageCount() === 0) {
+      throw new Error('Invalid or empty PDF document');
+    }
+
+    for (const pageNum of pages) {
+      if (pageNum < 1 || pageNum > sourcePdfDoc.getPageCount()) {
+        throw new Error(`Invalid page number: ${pageNum}`);
+      }
+
+      const newPdfDoc = await PDFDocument.create();
+      const [page] = await newPdfDoc.copyPages(sourcePdfDoc, [pageNum - 1]);
+      newPdfDoc.addPage(page);
+      const pdfBytes = await newPdfDoc.save();
+      results.push(new Blob([pdfBytes], { type: 'application/pdf' }));
+
+      // Clean up individual split document
+      (newPdfDoc as any) = null;
 
   return results
 }
@@ -107,9 +123,15 @@ export const mergePDFs = async (
   files: File[],
   onProgress?: (progress: number) => void
 ): Promise<Blob> => {
+  if (!files.length) {
+    throw new Error('No files provided for merging');
+  }
+
+  let mergedDoc: PDFDocument | null = null;
+  const compressedFiles: Blob[] = [];
+
   try {
     // First compress each file
-    const compressedFiles: Blob[] = []
     for (let i = 0; i < files.length; i++) {
       const compressed = await compressPDF(files[i])
       compressedFiles.push(compressed)
@@ -117,16 +139,23 @@ export const mergePDFs = async (
     }
 
     // Create merged document
-    const mergedDoc = await PDFDocument.create()
+    mergedDoc = await PDFDocument.create()
     
     // Merge compressed PDFs
     for (let i = 0; i < compressedFiles.length; i++) {
       const fileArrayBuffer = await compressedFiles[i].arrayBuffer()
       const pdf = await PDFDocument.load(fileArrayBuffer)
+      
+      if (!pdf || pdf.getPageCount() === 0) {
+        throw new Error(`Invalid or empty PDF document at index ${i}`);
+      }
+
       const pages = await mergedDoc.copyPages(pdf, pdf.getPageIndices())
       pages.forEach(page => mergedDoc.addPage(page))
       onProgress?.(40 + Math.round((i + 1) / files.length * 40))
-    }
+      
+      // Clean up individual PDF document
+      (pdf as any) = null;
 
     // Final compression of merged document
     const originalSize = files.reduce((acc, file) => acc + file.size, 0)
@@ -207,21 +236,33 @@ export const convertPDFToImages = async (
 }
 
 async function createImageFromPDF(url: string, format: string, quality: number): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    img.onload = () => {
-      const canvas = document.createElement('canvas')
-      canvas.width = img.width
-      canvas.height = img.height
-      
-      const ctx = canvas.getContext('2d')
-      if (!ctx) {
-        reject(new Error('Could not get canvas context'))
-        return
-      }
-      
-      ctx.drawImage(img, 0, 0)
-      
+  try {
+    // Load the PDF document using PDF.js
+    const loadingTask = pdfjs.getDocument(url)
+    const pdf = await loadingTask.promise
+    const page = await pdf.getPage(1) // Get the first page
+
+    // Set scale for better quality
+    const viewport = page.getViewport({ scale: 2.0 })
+    
+    // Create canvas
+    const canvas = document.createElement('canvas')
+    canvas.width = viewport.width
+    canvas.height = viewport.height
+    
+    const ctx = canvas.getContext('2d')
+    if (!ctx) {
+      throw new Error('Could not get canvas context')
+    }
+
+    // Render PDF page to canvas
+    await page.render({
+      canvasContext: ctx,
+      viewport: viewport
+    }).promise
+
+    // Convert canvas to blob
+    return new Promise((resolve, reject) => {
       canvas.toBlob(
         (blob) => {
           if (blob) resolve(blob)
@@ -230,12 +271,9 @@ async function createImageFromPDF(url: string, format: string, quality: number):
         `image/${format}`,
         quality
       )
-    }
-
-    img.onerror = () => {
-      reject(new Error('Failed to load PDF page'))
-    }
-
-    img.src = url
-  })
+    })
+  } catch (error) {
+    console.error('PDF rendering error:', error)
+    throw new Error(`Failed to render PDF page: ${error.message}`)
+  }
 }

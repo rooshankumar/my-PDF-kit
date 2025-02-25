@@ -10,20 +10,18 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <div className="mr-4 hidden md:flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="hidden font-bold sm:inline-block">
-              My PDF Kit
-            </span>
+      <div className="container flex h-14 items-center justify-between">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center space-x-2">
+            <span className="font-bold text-xl">My PDF Kit</span>
           </Link>
-        </div>
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className="w-full flex-1 md:w-auto md:flex-none">
-          </div>
-          <nav className="flex items-center">
-            <ModeToggle />
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link href="/tools/pdf" className="text-sm font-medium hover:text-primary">PDF Tools</Link>
+            <Link href="/tools/image" className="text-sm font-medium hover:text-primary">Image Tools</Link>
           </nav>
+        </div>
+        <div className="flex items-center space-x-4">
+          <ModeToggle />
         </div>
       </div>
     </header>

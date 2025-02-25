@@ -62,43 +62,54 @@ const features: Feature[] = [
 
 export default function HomePage() {
   return (
-    <div className="container py-8 md:py-12">
-      <div className="mx-auto flex max-w-[980px] flex-col items-center gap-8 text-center">
-        <motion.h1 
-          className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          Welcome to My PDF Kit
-        </motion.h1>
-        <motion.p 
-          className="max-w-[750px] text-lg text-muted-foreground sm:text-xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          Easy-to-use tools to convert, compress, and manipulate your PDFs and images. No registration required.
-        </motion.p>
-      </div>
-      <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3 mt-8">
+    <div className="container mx-auto px-4 py-12">
+      {/* Hero Section */}
+      <section className="text-center mb-16">
+        <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          Your All-in-One PDF Toolkit
+        </h1>
+        <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
+          Convert, compress, and manage your PDFs and images with our powerful, easy-to-use tools.
+        </p>
+      </section>
+
+      {/* Features Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {features.map((feature, index) => (
-          <motion.div
-            key={feature.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            <Link href={feature.href}>
-              <Card className="p-6 hover:bg-muted/50 transition-colors">
-                <div className="mb-4">{feature.icon}</div>
-                <h3 className="mb-2 font-semibold">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
-              </Card>
-            </Link>
-          </motion.div>
+          <Link href={feature.href} key={index}>
+            <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
+              <div className="flex items-start space-x-4">
+                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  {feature.icon}
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
+                </div>
+              </div>
+            </Card>
+          </Link>
         ))}
       </div>
+
+      {/* Benefits Section */}
+      <section className="mt-16 text-center">
+        <h2 className="text-3xl font-bold mb-8">Why Choose Our PDF Tools?</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="p-6">
+            <h3 className="text-xl font-semibold mb-3">Fast & Secure</h3>
+            <p className="text-gray-600 dark:text-gray-300">Process your files quickly with our secure, browser-based tools</p>
+          </div>
+          <div className="p-6">
+            <h3 className="text-xl font-semibold mb-3">Easy to Use</h3>
+            <p className="text-gray-600 dark:text-gray-300">Simple interface designed for the best user experience</p>
+          </div>
+          <div className="p-6">
+            <h3 className="text-xl font-semibold mb-3">Free to Use</h3>
+            <p className="text-gray-600 dark:text-gray-300">Access our core features without any cost</p>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

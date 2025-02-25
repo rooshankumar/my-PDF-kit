@@ -28,7 +28,6 @@ export function PDFToImages() {
       })
 
       if (images.length === 1) {
-        // Single page - direct download
         const fileName = files[0].file.name.replace('.pdf', '.jpg')
         downloadBlob(images[0], fileName)
         toast({
@@ -36,7 +35,6 @@ export function PDFToImages() {
           description: "Image has been downloaded"
         })
       } else {
-        // Multiple pages - create zip
         const baseName = files[0].file.name.replace('.pdf', '')
         await createZipFromBlobs(images, {
           filename: baseName,

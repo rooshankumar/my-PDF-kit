@@ -7,7 +7,6 @@ import { Toaster } from "@/components/ui/toaster"
 import { Header } from "@/components/shared/Header"
 import { Footer } from "@/components/shared/Footer"
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
-import Script from 'next/script'
 import { GA_TRACKING_ID } from '@/lib/analytics'
 
 const inter = Inter({ subsets: ["latin"] })
@@ -40,24 +39,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <Script
-          strategy="afterInteractive"
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-        />
-        <Script
-          id="gtag-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${GA_TRACKING_ID}');
-            `,
-          }}
-        />
-      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
@@ -73,6 +54,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <Toaster />
+          <GoogleAnalytics />
         </ThemeProvider>
       </body>
     </html>
