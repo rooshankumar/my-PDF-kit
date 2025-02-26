@@ -27,7 +27,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { downloadBlob } from "@/lib/file-utils"
+import { downloadBlob, createZipFromBlobs } from "@/lib/file-utils"
+import { splitPDF as splitPDFByPages } from "@/lib/pdf-utils"
 import { ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 
