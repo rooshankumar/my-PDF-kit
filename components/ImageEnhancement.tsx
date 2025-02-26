@@ -337,7 +337,7 @@ export function ImageEnhancement({ files, onEnhanced }: ImageEnhancementProps) {
             {files[currentIndex] ? (
               <img
                 src={files[currentIndex].preview}
-                alt={files[currentIndex].name}
+                alt={files[currentIndex].file.name}
                 className="w-full h-full object-contain"
               />
             ) : (
