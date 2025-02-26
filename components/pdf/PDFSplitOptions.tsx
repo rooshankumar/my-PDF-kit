@@ -136,7 +136,7 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
       
       const blobs = await splitPDFByPages(file.file, pagesToProcess)
       const names = pagesToProcess.map(pageNum => 
-        `${file.name.replace('.pdf', '')}-page-${pageNum}.pdf`
+        `${file.file.name.replace('.pdf', '')}-page-${pageNum}.pdf`
       )
       
       const zipBlob = await createZipFromBlobs(blobs, names)
