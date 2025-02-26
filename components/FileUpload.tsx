@@ -11,8 +11,8 @@ import { useToast } from "@/components/ui/use-toast"
 
 interface FileUploadProps {
   files: FileWithPreview[]
-  setFiles: Dispatch<SetStateAction<FileWithPreview[]>>
-  accept?: string[]
+  setFiles: (files: FileWithPreview[]) => void
+  accept?: Record<string, string[]>
   maxFiles?: number
   maxSize?: number
   multiple?: boolean
@@ -40,7 +40,7 @@ export function FileUpload({
           if (file.type === "application/pdf") {
             const originalSize = file.size
             const processedFile = await compressPDF(file)
-            
+
             // Show compression result
             if (processedFile.size < originalSize) {
               toast({

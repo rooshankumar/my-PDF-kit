@@ -69,7 +69,7 @@ export function PDFSplitAdvanced({ files, onComplete }: PDFSplitAdvancedProps) {
       const arrayBuffer = await file.file.arrayBuffer()
       const pdfDoc = await PDFDocument.load(arrayBuffer)
       const pageCount = pdfDoc.getPageCount()
-      
+
       // Generate thumbnails and page info
       const newPages: PageInfo[] = []
       for (let i = 0; i < pageCount; i++) {
@@ -80,11 +80,11 @@ export function PDFSplitAdvanced({ files, onComplete }: PDFSplitAdvancedProps) {
         })
       }
       setPages(newPages)
-      
+
       // Try to extract bookmarks
       // Note: This is a placeholder as pdf-lib doesn't directly support bookmark extraction
       setBookmarks([])
-      
+
     } catch (error) {
       console.error('Error loading PDF:', error)
       setError('Error loading PDF preview')
@@ -124,7 +124,7 @@ export function PDFSplitAdvanced({ files, onComplete }: PDFSplitAdvancedProps) {
 
   const validateInput = (): boolean => {
     setError('')
-    
+
     switch (splitMode) {
       case 'pages':
         if (selectedPages.size === 0) {
@@ -132,7 +132,7 @@ export function PDFSplitAdvanced({ files, onComplete }: PDFSplitAdvancedProps) {
           return false
         }
         break
-        
+
       case 'range':
         if (!pageRanges.trim()) {
           setError('Please enter page ranges')
@@ -148,7 +148,7 @@ export function PDFSplitAdvanced({ files, onComplete }: PDFSplitAdvancedProps) {
           }
         }
         break
-        
+
       case 'size':
         if (maxFileSize < 1) {
           setError('Minimum file size is 1MB')
@@ -156,27 +156,27 @@ export function PDFSplitAdvanced({ files, onComplete }: PDFSplitAdvancedProps) {
         }
         break
     }
-    
+
     return true
   }
 
   const handleSplit = async () => {
     if (!validateInput()) return
-    
+
     setIsProcessing(true)
     setProgress(0)
-    
+
     try {
-      const file = files[0]
-      const arrayBuffer = await file.file.arrayBuffer()
+      const file = files[0].file
+      const arrayBuffer = await file.arrayBuffer()
       const pdfDoc = await PDFDocument.load(arrayBuffer)
       let pagesToProcess: number[] = []
-      
+
       switch (splitMode) {
         case 'pages':
           pagesToProcess = Array.from(selectedPages)
           break
-          
+
         case 'range':
           const ranges = pageRanges.split(',')
           ranges.forEach(range => {
@@ -186,16 +186,16 @@ export function PDFSplitAdvanced({ files, onComplete }: PDFSplitAdvancedProps) {
             }
           })
           break
-          
+
         case 'individual':
           pagesToProcess = Array.from({ length: pages.length }, (_, i) => i + 1)
           break
-          
+
         case 'size':
           // Implement size-based splitting
           let currentSize = 0
           let currentPages: number[] = []
-          
+
           for (let i = 0; i < pages.length; i++) {
             const pageSize = pages[i].size || 0
             if (currentSize + pageSize > maxFileSize * 1024) { // Convert MB to KB
@@ -213,24 +213,24 @@ export function PDFSplitAdvanced({ files, onComplete }: PDFSplitAdvancedProps) {
           }
           break
       }
-      
+
       const totalOperations = pagesToProcess.length
       const splitDocs: { doc: PDFDocument, name: string }[] = []
-      
+
       for (let i = 0; i < pagesToProcess.length; i++) {
         const pageIndex = pagesToProcess[i] - 1
         const newPdfDoc = await PDFDocument.create()
         const [page] = await newPdfDoc.copyPages(pdfDoc, [pageIndex])
         newPdfDoc.addPage(page)
-        
+
         splitDocs.push({
           doc: newPdfDoc,
           name: `${file.name.replace('.pdf', '')}-page-${pagesToProcess[i]}.pdf`
         })
-        
+
         setProgress((i + 1) / totalOperations * 100)
       }
-      
+
       // Create URLs for all split PDFs
       const urls: string[] = []
       for (const { doc, name } of splitDocs) {
@@ -239,9 +239,9 @@ export function PDFSplitAdvanced({ files, onComplete }: PDFSplitAdvancedProps) {
         const url = URL.createObjectURL(blob)
         urls.push(url)
       }
-      
+
       onComplete?.(urls)
-      
+
     } catch (error) {
       console.error('Split failed:', error)
       setError('Error processing PDF')

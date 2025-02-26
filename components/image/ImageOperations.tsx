@@ -64,7 +64,11 @@ export function ImageOperations({ defaultMode = "compress" }: ImageOperationsPro
         <FileUpload
           files={files}
           setFiles={setFiles}
-          accept={["image/jpeg", "image/png", "image/webp"]}
+          accept={{
+            'image/jpeg': ['.jpg', '.jpeg'],
+            'image/png': ['.png'],
+            'image/webp': ['.webp']
+          }}
           multiple={true}
           maxFiles={10}
         />

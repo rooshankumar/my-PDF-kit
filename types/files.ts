@@ -1,9 +1,5 @@
 
-export interface FileWithPreview {
-  file: File
+export interface FileWithPreview extends File {
   preview: string
-  arrayBuffer: () => Promise<ArrayBuffer>
-  name: string
-  size: number
-  type: string
+  file: File
 }
