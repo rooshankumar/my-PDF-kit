@@ -361,7 +361,7 @@ export function ImageEnhancement({ files, onEnhanced }: ImageEnhancementProps) {
                 >
                   <img
                     src={file.preview}
-                    alt={file.name}
+                    alt={file.file.name}
                     className="w-full h-full object-cover"
                   />
                 </button>
