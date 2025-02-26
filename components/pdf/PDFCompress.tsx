@@ -12,7 +12,7 @@ import { compressPDF } from "@/lib/pdf-utils"
 
 interface PDFCompressProps {
   files: FileWithPreview[]
-  setFiles: (files: FileWithPreview[]) => void
+  setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[]>>
 }
 
 interface CompressedFile {
@@ -49,7 +49,7 @@ export function PDFCompress({ files, setFiles }: PDFCompressProps) {
           else compressionLevel = 'high'
 
           const compressedBlob = await compressPDF(file.file, compressionLevel)
-          
+
           // Trigger download
           const url = URL.createObjectURL(compressedBlob)
           const link = document.createElement('a')
@@ -69,9 +69,9 @@ export function PDFCompress({ files, setFiles }: PDFCompressProps) {
           }
         })
       )
-      
+
       setCompressedFiles(compressed)
-      
+
       toast({
         title: "Success",
         description: `Compressed and downloaded ${files.length} ${files.length === 1 ? 'PDF' : 'PDFs'}`,
