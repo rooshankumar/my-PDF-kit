@@ -76,7 +76,7 @@ export function ImageCompress({ files, setFiles }: ImageCompressProps) {
           <FileUpload
             files={files}
             setFiles={setFiles}
-            accept={["image/jpeg", "image/png", "image/webp"]}
+            accept={{ 'image/jpeg': ['.jpg', '.jpeg'], 'image/png': ['.png'], 'image/webp': ['.webp'] }}
             maxFiles={10}
             multiple={true}
           />
