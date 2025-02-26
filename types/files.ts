@@ -1,5 +1,5 @@
 
-export interface FileWithPreview extends File {
-  preview: string
+export interface FileWithPreview {
   file: File
+  preview: string
 }
