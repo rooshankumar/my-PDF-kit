@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 
 interface ImageCompressProps {
   files: FileWithPreview[]
-  setFiles: (files: FileWithPreview[]) => void
+  setFiles: (files: FileWithPreview[] | ((prev: FileWithPreview[]) => FileWithPreview[])) => void
 }
 
 interface CompressedFile {
@@ -48,13 +48,13 @@ export function ImageCompress({ files, setFiles }: ImageCompressProps) {
           // Get the file format from the mime type
           const format = file.file.type.split('/')[1]
           const compressedBlob = await compressImage(file.file, format, quality)
-          
+
           // Ensure the blob has the correct type
           const blobWithType = new Blob([compressedBlob], { type: file.file.type })
-          
+
           // Trigger download with the typed blob
           downloadBlob(blobWithType, `compressed_${file.file.name}`)
-          
+
           return {
             original: file.file,
             compressed: blobWithType,
@@ -64,9 +64,9 @@ export function ImageCompress({ files, setFiles }: ImageCompressProps) {
           }
         })
       )
-      
+
       setCompressedFiles(compressed)
-      
+
       toast({
         title: "Success",
         description: `Compressed and downloaded ${files.length} ${files.length === 1 ? 'image' : 'images'}`,
@@ -154,4 +154,4 @@ export function ImageCompress({ files, setFiles }: ImageCompressProps) {
       </div>
     </div>
   )
-} 
+}
