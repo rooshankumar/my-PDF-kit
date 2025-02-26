@@ -147,10 +147,7 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
       const pdfBytes = await newPdfDoc.save()
       const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' })
       
-      await downloadBlob(pdfBlob, {
-        filename: `split_${range}.pdf`,
-        autoDownload: true
-      })
+      await downloadBlob(pdfBlob, `split_${range}.pdf`)
 
       toast({
         title: "Success",
