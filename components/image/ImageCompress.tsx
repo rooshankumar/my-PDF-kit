@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { FileUpload } from "@/components/FileUpload"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { compressImage } from "@/lib/image/compression"
+import { compressImage } from "@/lib/file-utils"
 import { useToast } from "@/components/ui/use-toast"
 import { downloadBlob } from "@/lib/file-utils"
 
