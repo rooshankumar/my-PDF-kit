@@ -32,10 +32,7 @@ export function ImageOperations({ defaultMode = "compress" }: ImageOperationsPro
       )
 
       if (compressedBlobs.length === 1) {
-        await downloadBlob(compressedBlobs[0], {
-          filename: `compressed-${files[0].file.name}`,
-          autoDownload: true
-        })
+        await downloadBlob(compressedBlobs[0], `compressed-${files[0].file.name}`)
       } else {
         await createZipFromBlobs(compressedBlobs, {
           filename: 'compressed-images',
