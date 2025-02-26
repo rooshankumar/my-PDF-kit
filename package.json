@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next build && next export"
   },
   "dependencies": {
     "@emailjs/browser": "^4.3.3",
@@ -49,7 +50,7 @@
     "typescript": "^5"
   },
   "engines": {
-    "node": ">=20.5.0",
-    "npm": ">=10.2.3"
+    "node": "20",
+    "npm": "10"
   }
 }
