@@ -140,7 +140,7 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
       )
       
       const zipBlob = await createZipFromBlobs(blobs, names)
-      downloadBlob(zipBlob, `split-${file.name.replace('.pdf', '')}.zip`)
+      downloadBlob(zipBlob, `split-${file.file.name.replace('.pdf', '')}.zip`)
       
       const urls = blobs.map(blob => URL.createObjectURL(blob))
       onProcessComplete?.(urls)
