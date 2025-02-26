@@ -17,11 +17,13 @@ import { formatBytes } from "@/lib/file-utils"
 import { Input } from "@/components/ui/input"
 
 interface PDFOperationsProps {
+  files: FileWithPreview[]
+  setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[]>>
+  mode?: "split" | "compress" | "merge"
   defaultMode?: "split" | "compress" | "convert"
 }
 
-export function PDFOperations({ defaultMode = "compress" }: PDFOperationsProps) {
-  const [files, setFiles] = useState<FileWithPreview[]>([])
+export function PDFOperations({ files, setFiles, mode = "compress", defaultMode = "compress" }: PDFOperationsProps) {
   const [quality, setQuality] = useState(80)
   const [format, setFormat] = useState<"jpeg" | "png">("jpeg")
   const [isProcessing, setIsProcessing] = useState(false)
