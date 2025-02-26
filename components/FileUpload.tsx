@@ -61,7 +61,7 @@ export function FileUpload({
         }
 
         if (multiple) {
-          setFiles(prevFiles => [...prevFiles, ...newFiles])
+          setFiles((prevFiles: FileWithPreview[]) => [...prevFiles, ...newFiles])
         } else {
           setFiles(newFiles)
         }
