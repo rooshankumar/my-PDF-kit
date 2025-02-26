@@ -123,7 +123,7 @@ const Carousel = React.forwardRef<
           carouselRef,
           api: api,
           ...(opts || {}),
-          orientation: orientation || ((opts as EmblaOptionsType)?.axis === "y" ? "vertical" : "horizontal"),
+          orientation: orientation || ((opts as CarouselOptions)?.axis === "y" ? "vertical" : "horizontal"),
           scrollPrev,
           scrollNext,
           canScrollPrev,
