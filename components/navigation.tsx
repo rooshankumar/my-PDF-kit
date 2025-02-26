@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from 'react'
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -18,7 +19,7 @@ import { useTheme } from 'next-themes'
 interface NavItem {
   label: string
   href: string
-  icon: JSX.Element
+  icon: React.ReactNode
 }
 
 const navItems: NavItem[] = [
