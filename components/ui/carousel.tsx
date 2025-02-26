@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 
 type CarouselApi = ReturnType<typeof useEmblaCarousel>[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
-type CarouselOptions = UseCarouselParameters[0]
+type CarouselOptions = EmblaOptionsType
 type CarouselPlugin = UseCarouselParameters[1]
 
 type CarouselProps = {
@@ -122,8 +122,8 @@ const Carousel = React.forwardRef<
         value={{
           carouselRef,
           api: api,
-          ...(opts || {}),
-          orientation: orientation || ((opts as CarouselOptions)?.axis === "y" ? "vertical" : "horizontal"),
+          ...opts,
+          orientation: orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
           scrollPrev,
           scrollNext,
           canScrollPrev,
