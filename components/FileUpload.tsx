@@ -11,7 +11,7 @@ import { useToast } from "@/components/ui/use-toast"
 
 interface FileUploadProps {
   files: FileWithPreview[]
-  setFiles: (files: FileWithPreview[]) => void
+  setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[]>>
   accept?: Record<string, string[]>
   maxFiles?: number
   maxSize?: number
