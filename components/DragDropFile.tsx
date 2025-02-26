@@ -111,6 +111,15 @@ export function DragDropFile({
     const newFiles: FileWithPreview[] = []
     const errors: string[] = []
 
+    const createFileWithPreview = (file: File): FileWithPreview => ({
+      file,
+      preview: createPreview(file),
+      arrayBuffer: () => file.arrayBuffer(),
+      name: file.name,
+      size: file.size,
+      type: file.type
+    })
+
     // Check total number of files
     if (files.length + fileList.length > maxFiles) {
       toast({
