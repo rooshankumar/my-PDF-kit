@@ -199,7 +199,7 @@ export function PDFSplit({ files, setFiles }: PDFSplitProps) {
               <CardDescription className="text-xs">Choose how to split your PDF</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Tabs value={splitMode} onValueChange={(value: 'range' | 'pages') => setSplitMode(value)}>
+              <Tabs value={splitMode} onValueChange={(value: string) => setSplitMode(value as 'range' | 'pages')}>
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="range">Page Range</TabsTrigger>
                   <TabsTrigger value="pages">Select Pages</TabsTrigger>
