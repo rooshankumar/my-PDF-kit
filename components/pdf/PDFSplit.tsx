@@ -160,7 +160,7 @@ export function PDFSplit({ files, setFiles }: PDFSplitProps) {
       <FileUpload
         files={files}
         setFiles={setFiles}
-        accept={["application/pdf"]}
+        accept={{ 'application/pdf': ['.pdf'] }}
         maxFiles={1}
         multiple={false}
       />

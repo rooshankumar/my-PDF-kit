@@ -69,14 +69,14 @@ export function PDFMerge({ files, setFiles }: PDFMergeProps) {
 
     try {
       const mergedBytes = await mergePDFs(files.map(f => f.file), setProgress)
-      
+
       // Create blob and download
       const blob = new Blob([mergedBytes], { type: 'application/pdf' })
-      
+
       // Check final size
       const finalSize = blob.size
       const originalTotalSize = files.reduce((acc, file) => acc + file.file.size, 0)
-      
+
       if (finalSize > originalTotalSize) {
         toast({
           title: "Warning",

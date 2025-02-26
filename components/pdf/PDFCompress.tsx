@@ -94,7 +94,7 @@ export function PDFCompress({ files, setFiles }: PDFCompressProps) {
         <FileUpload
           files={files}
           setFiles={setFiles}
-          accept={["application/pdf"]}
+          accept={{ 'application/pdf': ['.pdf'] }}
           maxFiles={10}
           multiple={true}
           className="w-full"
