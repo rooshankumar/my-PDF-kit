@@ -28,7 +28,7 @@ export function ImageOperations({ defaultMode = "compress" }: ImageOperationsPro
 
     try {
       const compressedBlobs = await Promise.all(
-        files.map(file => compressImage(file.file, quality))
+        files.map(file => compressImage(file.file, file.file.type.split('/')[1], quality / 100))
       )
 
       if (compressedBlobs.length === 1) {
