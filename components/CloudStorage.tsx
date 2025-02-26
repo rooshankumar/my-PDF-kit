@@ -64,7 +64,7 @@ export function CloudStorage({ files = [], fileUrl, onClose }: CloudStorageProps
       if (fileUrl) {
         console.log(`File URL to upload: ${fileUrl}`)
       } else if (files.length > 0) {
-        console.log(`Files to upload: ${files.map(f => f.name).join(', ')}`)
+        console.log(`Files to upload: ${files.map(f => f.file.name).join(', ')}`)
       }
 
     } catch (error) {
