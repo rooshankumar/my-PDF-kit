@@ -13,10 +13,12 @@ interface CloudStorageProps {
   onClose?: () => void
 }
 
+import { ReactElement } from 'react'
+
 interface CloudProvider {
   id: string
   name: string
-  icon: JSX.Element
+  icon: ReactElement
   color: string
 }
 
