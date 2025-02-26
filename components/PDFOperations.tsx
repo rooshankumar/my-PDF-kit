@@ -78,10 +78,7 @@ export function PDFOperations({ files, setFiles, mode = "compress", defaultMode 
         files[0].file,
         quality >= 80 ? 'high' : quality >= 50 ? 'medium' : 'low'
       )
-      await downloadBlob(compressedBlob, {
-        filename: `compressed-${files[0].file.name}`,
-        autoDownload: true
-      })
+      await downloadBlob(compressedBlob, `compressed-${files[0].file.name}`)
 
       const originalSize = files[0].file.size
       const compressedSize = compressedBlob.size
