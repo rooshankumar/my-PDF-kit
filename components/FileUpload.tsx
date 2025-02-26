@@ -1,9 +1,9 @@
+
 "use client"
 
 import React from 'react'
 import { useDropzone } from 'react-dropzone'
 import { FileWithPreview } from '@/types/files'
-import { Dispatch, SetStateAction } from 'react'
 import { Button } from "@/components/ui/button"
 import { Upload } from "lucide-react"
 import { compressPDF } from "@/lib/pdf/compression"
@@ -22,7 +22,9 @@ interface FileUploadProps {
 export function FileUpload({
   files,
   setFiles,
-  accept = ['application/pdf'],
+  accept = {
+    'application/pdf': ['.pdf']
+  },
   maxFiles = 1,
   maxSize = 10485760, // 10MB
   multiple = false,
@@ -72,12 +74,12 @@ export function FileUpload({
         })
       }
     },
-    [setFiles, toast]
+    [setFiles, multiple, toast]
   )
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
     onDrop,
-    accept: accept.reduce((acc, curr) => ({ ...acc, [curr]: [] }), {}),
+    accept,
     maxFiles,
     maxSize,
     multiple,
@@ -115,7 +117,7 @@ export function FileUpload({
             {multiple ? "Drag & drop files here, or click to select" : "Drag & drop a file here, or click to select"}
           </p>
           <p className="text-sm text-muted-foreground mt-1">
-            Accepts {accept.join(", ")}
+            Accepts PDF files
           </p>
           {maxFiles > 0 && (
             <p className="text-sm text-muted-foreground">

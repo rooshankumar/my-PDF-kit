@@ -124,7 +124,7 @@ export function PDFMerge({ files, setFiles }: PDFMergeProps) {
       <FileUpload
         files={files}
         setFiles={setFiles}
-        accept={["application/pdf"]}
+        accept={{ 'application/pdf': ['.pdf'] }}
         maxFiles={10}
         multiple={true}
       />
