@@ -223,9 +223,10 @@ export function PDFSplitAdvanced({ files, onComplete }: PDFSplitAdvancedProps) {
         const [page] = await newPdfDoc.copyPages(pdfDoc, [pageIndex])
         newPdfDoc.addPage(page)
 
+        // Updated code to access the name correctly
         splitDocs.push({
           doc: newPdfDoc,
-          name: `${file.name.replace('.pdf', '')}-page-${pagesToProcess[i]}.pdf`
+          name: `${file.file.name.replace('.pdf', '')}-page-${pagesToProcess[i]}.pdf`
         })
 
         setProgress((i + 1) / totalOperations * 100)
