@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react'
@@ -8,6 +9,7 @@ import { Slider } from '@/components/ui/slider'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Progress } from '@/components/ui/progress'
 import { PDFDocument } from 'pdf-lib'
+import JSZip from 'jszip'
 import { FileWithPreview } from '@/types/files'
 import {
   Select,
@@ -24,7 +26,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { splitPDFByPages, createZipFromBlobs, downloadBlob } from '@/lib/pdf/utils'
+import { useToast } from "@/components/ui/use-toast"
+import { downloadBlob } from "@/lib/file-utils"
+import { ArrowLeft } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface PDFSplitOptionsProps {
   files: FileWithPreview[]
@@ -43,6 +48,8 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
   const [bookmarks, setBookmarks] = useState<{ title: string, pageIndex: number }[]>([])
   const [previewPages, setPreviewPages] = useState<number[]>([])
   const [error, setError] = useState<string>('')
+  const { toast } = useToast()
+  const router = useRouter()
 
   useEffect(() => {
     loadPDFPreview()
@@ -102,13 +109,15 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
   }
 
   const handleSplit = async () => {
-    if (!validateInput()) return
-    
+    if (!files.length) return
     setIsProcessing(true)
-    setProgress(0)
-    
+
     try {
       const file = files[0]
+      const arrayBuffer = await file.file.arrayBuffer()
+      const pdfDoc = await PDFDocument.load(arrayBuffer)
+      const pageCount = pdfDoc.getPageCount()
+      
       let pagesToProcess: number[] = []
       
       switch (splitMode) {
@@ -127,13 +136,11 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
           break
           
         case 'individual':
-          pagesToProcess = previewPages
+          pagesToProcess = Array.from({ length: pageCount }, (_, i) => i + 1)
           break
       }
-      
+
       const totalOperations = pagesToProcess.length
-      let completed = 0
-      
       const blobs = await splitPDFByPages(file.file, pagesToProcess)
       const names = pagesToProcess.map(pageNum => 
         `${file.file.name.replace('.pdf', '')}-page-${pageNum}.pdf`
@@ -144,12 +151,19 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
       
       const urls = blobs.map(blob => URL.createObjectURL(blob))
       onProcessComplete?.(urls)
-      
-      urls.forEach(url => URL.revokeObjectURL(url))
-      
+
+      toast({
+        title: "Success",
+        description: "PDF split successfully"
+      })
+
     } catch (error) {
-      console.error('Split failed:', error)
-      setError('Error processing PDF')
+      console.error("Split failed:", error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to split PDF",
+        variant: "destructive"
+      })
     } finally {
       setIsProcessing(false)
       setProgress(0)
@@ -158,6 +172,15 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
 
   return (
     <div className="space-y-6">
+      <Button
+        variant="ghost"
+        onClick={() => router.push('/tools')}
+        className="mb-4 flex items-center gap-2"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Tools
+      </Button>
+
       <Card>
         <CardHeader>
           <CardTitle>Split PDF Options</CardTitle>
@@ -167,7 +190,7 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
           <div className="space-y-6">
             <RadioGroup
               value={splitMode}
-              onValueChange={(value) => setSplitMode(value as SplitMode)}
+              onValueChange={(value: string) => setSplitMode(value as SplitMode)}
               className="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
               <div className="flex items-center space-x-2">
@@ -190,11 +213,11 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
 
             {splitMode === 'pages' && (
               <div className="space-y-2">
-                <Label>Select Pages</Label>
+                <Label>Page Numbers</Label>
                 <Input
-                  placeholder="e.g., 1,3,5,7"
+                  placeholder="e.g., 1,2,3"
                   value={selectedPages}
-                  onChange={(e) => setSelectedPages(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSelectedPages(e.target.value)}
                 />
                 <p className="text-sm text-muted-foreground">
                   Enter page numbers separated by commas
@@ -208,7 +231,7 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
                 <Input
                   placeholder="e.g., 1-3,4-6"
                   value={pageRanges}
-                  onChange={(e) => setPageRanges(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPageRanges(e.target.value)}
                 />
                 <p className="text-sm text-muted-foreground">
                   Enter page ranges separated by commas
@@ -221,7 +244,7 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
                 <Label>Maximum File Size: {maxFileSize}MB</Label>
                 <Slider
                   value={[maxFileSize]}
-                  onValueChange={([value]) => setMaxFileSize(value)}
+                  onValueChange={(value: number[]) => setMaxFileSize(value[0])}
                   min={1}
                   max={20}
                   step={1}
@@ -250,38 +273,6 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
           </div>
         </CardContent>
       </Card>
-
-      {/* Preview Panel */}
-      {previewPages.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Page Preview</CardTitle>
-            <CardDescription>Select pages to include in the split</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-8 gap-2">
-              {previewPages.map((pageNum) => (
-                <Button
-                  key={pageNum}
-                  variant={selectedPages.includes(pageNum.toString()) ? "default" : "outline"}
-                  className="h-10 w-10"
-                  onClick={() => {
-                    const pages = new Set(selectedPages.split(',').map(p => p.trim()).filter(Boolean))
-                    if (pages.has(pageNum.toString())) {
-                      pages.delete(pageNum.toString())
-                    } else {
-                      pages.add(pageNum.toString())
-                    }
-                    setSelectedPages(Array.from(pages).sort((a, b) => parseInt(a) - parseInt(b)).join(','))
-                  }}
-                >
-                  {pageNum}
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   )
 }
