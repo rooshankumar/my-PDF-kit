@@ -27,6 +27,7 @@
     "@types/react-beautiful-dnd": "^13.1.8",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
+    "embla-carousel-react": "^8.5.2",
     "framer-motion": "^12.4.7",
     "jszip": "^3.10.1",
     "lucide-react": "^0.476.0",

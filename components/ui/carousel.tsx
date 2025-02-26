@@ -1,14 +1,14 @@
 "use client"
 
 import * as React from "react"
-import useEmblaCarousel, { type EmblaCarouselType, type EmblaOptionsType } from "embla-carousel-react"
+import useEmblaCarousel, { type EmblaOptionsType } from "embla-carousel-react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 type CarouselApi = ReturnType<typeof useEmblaCarousel>[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
-type CarouselOptions = UseCarouselParameters[0]
+type CarouselOptions = EmblaOptionsType & { axis?: "x" | "y" }
 type CarouselPlugin = UseCarouselParameters[1]
 
 type CarouselProps = {
@@ -17,6 +17,8 @@ type CarouselProps = {
   orientation?: "horizontal" | "vertical"
   setApi?: (api: CarouselApi) => void
 }
+
+// ... rest of your code remains the same
 
 type CarouselContextProps = {
   carouselRef: ReturnType<typeof useEmblaCarousel>[0]
@@ -46,7 +48,7 @@ const Carousel = React.forwardRef<
   (
     {
       orientation = "horizontal",
-      opts = {},
+      opts = { axis: "x" }, // ✅ Ensure default `axis` value
       setApi,
       plugins,
       className,
@@ -57,8 +59,8 @@ const Carousel = React.forwardRef<
   ) => {
     const [carouselRef, api] = useEmblaCarousel(
       {
-        ...(opts || {}),
-        axis: orientation === "horizontal" ? "x" : "y",
+        ...opts,
+        axis: opts.axis ?? (orientation === "horizontal" ? "x" : "y"), // ✅ Ensure axis is always defined
       },
       plugins
     )
@@ -122,8 +124,8 @@ const Carousel = React.forwardRef<
         value={{
           carouselRef,
           api: api,
-          ...(opts || {}),
-          orientation: orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
+          opts,
+          orientation: orientation ?? (opts.axis === "y" ? "vertical" : "horizontal"), // ✅ Ensure default value
           scrollPrev,
           scrollNext,
           canScrollPrev,
