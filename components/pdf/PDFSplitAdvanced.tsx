@@ -167,7 +167,7 @@ export function PDFSplitAdvanced({ files, onComplete }: PDFSplitAdvancedProps) {
     setProgress(0)
 
     try {
-      const file = files[0].file
+      const file = files[0]
       const arrayBuffer = await file.file.arrayBuffer()
       const pdfDoc = await PDFDocument.load(arrayBuffer)
       let pagesToProcess: number[] = []
