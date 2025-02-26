@@ -16,6 +16,7 @@ interface FileUploadProps {
   maxFiles?: number
   maxSize?: number
   multiple?: boolean
+  className?: string
 }
 
 export function FileUpload({
@@ -25,6 +26,7 @@ export function FileUpload({
   maxFiles = 1,
   maxSize = 10485760, // 10MB
   multiple = false,
+  className,
 }: FileUploadProps) {
   const { toast } = useToast()
 
