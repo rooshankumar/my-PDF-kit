@@ -179,11 +179,11 @@ export function DragDropFile({
   }, [setFiles, onFilesSelected])
 
   const renderFilePreview = (file: FileWithPreview) => {
-    if (file.type.startsWith('image/') && file.preview) {
+    if (file.file.type.startsWith('image/') && file.preview) {
       return (
         <img
           src={file.preview}
-          alt={file.name}
+          alt={file.file.name}
           className={cn("w-full h-full object-cover rounded-lg", previewSize === 'small' && 'max-w-[40px] max-h-[40px]')}
         />
       )
@@ -191,7 +191,7 @@ export function DragDropFile({
 
     return (
       <div className="w-full h-full flex items-center justify-center bg-muted rounded-lg">
-        {file.type === 'application/pdf' ? (
+        {file.file.type === 'application/pdf' ? (
           <div className="relative w-full h-full">
             <FileText className="absolute inset-0 m-auto h-4 w-4 text-muted-foreground" />
             <canvas className="absolute inset-0 w-full h-full object-contain opacity-30" />
