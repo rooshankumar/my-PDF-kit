@@ -180,10 +180,7 @@ export function ImageEnhancement({ files, onEnhanced }: ImageEnhancementProps) {
       
       const newFile: FileWithPreview = {
         file: file,
-        preview: URL.createObjectURL(file),
-        name: file.name,
-        type: file.type,
-        size: file.size
+        preview: URL.createObjectURL(file)
       }
       
       const newFiles = [...files]
