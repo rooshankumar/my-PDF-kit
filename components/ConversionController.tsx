@@ -6,7 +6,7 @@ import SmartOptions from "./SmartOptions"
 import PreviewPanel from "./PreviewPanel"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
-import { Tooltip, TooltipProvider } from "@/components/ui/tooltip"
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 
 export default function ConversionController() {
   const [files, setFiles] = useState<File[]>([])
@@ -93,16 +93,22 @@ export default function ConversionController() {
             setCompressionLevel={setCompressionLevel}
           />
           <div className="flex space-x-4">
-            <Tooltip content="Convert your files">
-              <Button onClick={handleConvert} className="flex-1">
-                Convert
-              </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={handleConvert} className="flex-1">
+                  Convert
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Convert your files</TooltipContent>
             </Tooltip>
             {convertedFileUrl && (
-              <Tooltip content="Download converted file">
-                <Button as="a" href={convertedFileUrl} download className="flex-1">
-                  Download
-                </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button asChild className="flex-1">
+                    <a href={convertedFileUrl} download>Download</a>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Download converted file</TooltipContent>
               </Tooltip>
             )}
           </div>
