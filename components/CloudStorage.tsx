@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { FileWithPreview } from '@/types/files'
 import { Cloud, Share2 } from 'lucide-react'
-import QRCode from 'qrcode.react'
+import { QRCodeCanvas } from 'qrcode.react'
 
 interface CloudStorageProps {
   fileUrl?: string
