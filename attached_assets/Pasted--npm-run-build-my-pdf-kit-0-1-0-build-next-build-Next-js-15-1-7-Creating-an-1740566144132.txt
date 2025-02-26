@@ -1,0 +1,95 @@
+
+$ npm run build
+
+> my-pdf-kit@0.1.0 build
+> next build
+
+   ▲ Next.js 15.1.7
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./components/pdf/PDFToImages.tsx
+Module not found: Can't resolve 'jszip'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./app/pdf/to-images/page.tsx
+
+./components/ui/button.tsx
+Module not found: Can't resolve '@radix-ui/react-slot'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./app/image/to-pdf/page.tsx
+
+./components/ui/button.tsx
+Module not found: Can't resolve 'class-variance-authority'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./app/image/to-pdf/page.tsx
+
+./components/ui/dropdown-menu.tsx
+Module not found: Can't resolve '@radix-ui/react-dropdown-menu'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./components/shared/mode-toggle.tsx
+./components/shared/Header.tsx
+
+./components/ui/label.tsx
+Module not found: Can't resolve '@radix-ui/react-label'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./components/PDFOperations.tsx
+./app/tools/pdf/page.tsx
+
+
+> Build failed because of webpack errors
+
+"build.command" failed                                        
+────────────────────────────────────────────────────────────────
+
+  Error message
+  Command failed with exit code 1: npm run build
+
+  Error location
+  In build.command from netlify.toml:
+  npm run build
+
+  Resolved config
+  build:
+    command: npm run build
+    commandOrigin: config
+    environment:
+      - NODE_VERSION
+      - NPM_VERSION
+    publish: /home/runner/workspace/.next
+    publishOrigin: config
+  plugins:
+    - inputs: {}
+      origin: config
+      package: '@netlify/plugin-nextjs'
+~/workspace$ netlify build
+
+Netlify Build                                                 
+────────────────────────────────────────────────────────────────
+
+❯ Version
+  @netlify/build 29.58.10
+
+❯ Flags
+  accountId: 67b613d37d917254bdd19679
+  dry: false
+
+❯ Current directory
+  /home/runner/workspace
+
+❯ Config file
