@@ -267,7 +267,7 @@ export function DragDropFile({
                   </button>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground truncate">
-                  {file.name}
+                  {file.file.name}
                 </p>
               </div>
             ))}
