@@ -115,11 +115,7 @@ export function PDFOperations({ files, setFiles, mode = "compress", defaultMode 
       )
 
       if (imageBlobs.length === 1) {
-        await downloadBlob(imageBlobs[0], {
-          filename: files[0].file.name.replace('.pdf', ''),
-          format,
-          autoDownload: true
-        })
+        await downloadBlob(imageBlobs[0], `${files[0].file.name.replace('.pdf', '')}.${format}`)
       } else {
         await createZipFromBlobs(imageBlobs, {
           filename: files[0].file.name.replace('.pdf', ''),
