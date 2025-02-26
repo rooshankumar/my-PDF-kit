@@ -119,7 +119,7 @@ export function ImageToPDF({ files, setFiles }: ImageToPDFProps) {
         <FileUpload
           files={files}
           setFiles={setFiles}
-          accept={["image/jpeg", "image/png"]}
+          accept={{ 'image/jpeg': ['.jpg', '.jpeg'], 'image/png': ['.png'] }}
           maxFiles={10}
           multiple={true}
         />
