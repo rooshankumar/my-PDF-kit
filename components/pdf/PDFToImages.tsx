@@ -36,7 +36,7 @@ export function PDFToImages() {
       // Create download link and trigger download
       const link = document.createElement('a')
       link.href = downloadUrl
-      link.download = `${files[0].name.replace('.pdf', '')}_images.zip`
+      link.download = `${files[0].file.name.replace('.pdf', '')}_images.zip`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
