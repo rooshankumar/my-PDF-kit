@@ -250,7 +250,7 @@ export function DragDropFile({
           })}>
             {files.map((file, index) => (
               <div
-                key={`${file.name}-${index}`}
+                key={`${file.file.name}-${index}`}
                 className="relative group aspect-square"
               >
                 <div className={cn(
