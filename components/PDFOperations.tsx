@@ -148,7 +148,7 @@ export function PDFOperations({ files, setFiles, mode = "compress", defaultMode 
           <FileUpload
             files={files}
             setFiles={setFiles}
-            accept={["application/pdf"]}
+            accept={{ 'application/pdf': ['.pdf'] }}
             maxFiles={1}
             multiple={false}
           />
