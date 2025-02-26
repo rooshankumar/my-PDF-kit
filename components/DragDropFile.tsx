@@ -127,10 +127,7 @@ export function DragDropFile({
         const preview = createPreview(file)
         newFiles.push({
           file,
-          preview,
-          name: file.name,
-          type: file.type,
-          size: file.size
+          preview
         })
       } catch (error) {
         errors.push(`${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`)
