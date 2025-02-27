@@ -29,7 +29,8 @@ export async function convertToPDF(
   } = options
 
   const pdfDoc = await PDFDocument.create()
-  const page = pdfDoc.addPage(PAGE_SIZES[pageSize])
+  const pageSizeArray = PAGE_SIZES[pageSize]
+  const page = pdfDoc.addPage(pageSizeArray as [number, number])
 
   const imageBytes = await file.arrayBuffer()
   let image

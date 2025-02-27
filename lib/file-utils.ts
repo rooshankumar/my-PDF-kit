@@ -1,4 +1,4 @@
-import JSZip from 'jszip'
+import * as JSZip from 'jszip'
 
 export interface DownloadOptions {
   filename: string
