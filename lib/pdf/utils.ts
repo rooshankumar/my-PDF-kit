@@ -200,3 +200,105 @@ export const convertPDFToImages = async (
 
   return results
 }
+import { PDFDocument } from 'pdf-lib'
+import * as pdfjs from 'pdfjs-dist'
+import JSZip from 'jszip'
+
+// Initialize PDF.js worker
+if (typeof window !== 'undefined') {
+  pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+}
+
+export const formatBytes = (bytes: number) => {
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
+export async function optimizePDF(
+  pdfBytes: Uint8Array,
+  options: {
+    onProgress?: (progress: number) => void
+  } = {}
+): Promise<Uint8Array> {
+  const { onProgress } = options
+  onProgress?.(10)
+
+  const pdfDoc = await PDFDocument.load(pdfBytes)
+  onProgress?.(50)
+
+  // Only include valid properties for SaveOptions
+  return await pdfDoc.save({
+    useObjectStreams: true,
+    addDefaultPage: false
+  })
+}
+
+export async function convertPDFToImages(
+  file: File, 
+  options: {
+    format?: 'png' | 'jpeg',
+    quality?: number,
+    onProgress?: (progress: number) => void
+  } = {}
+): Promise<Blob[]> {
+  const { 
+    format = 'jpeg', 
+    quality = 0.8,
+    onProgress 
+  } = options;
+  
+  // Load the PDF file
+  const arrayBuffer = await file.arrayBuffer();
+  onProgress?.(10);
+  
+  // Load the PDF using pdf.js
+  const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
+  const numPages = pdf.numPages;
+  onProgress?.(20);
+  
+  const imageBlobs: Blob[] = [];
+  
+  // For each page, render to canvas and convert to image
+  for (let i = 0; i < numPages; i++) {
+    const page = await pdf.getPage(i + 1);
+    const viewport = page.getViewport({ scale: 2.0 }); // Higher scale for better quality
+    
+    // Create a canvas element to render the page
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    
+    if (!context) {
+      continue;
+    }
+    
+    // Set canvas dimensions to match the page viewport
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    
+    // Render the PDF page to the canvas
+    await page.render({
+      canvasContext: context,
+      viewport: viewport
+    }).promise;
+    
+    // Convert canvas to blob
+    const blob = await new Promise<Blob>((resolve) => {
+      canvas.toBlob(
+        (blob) => resolve(blob || new Blob()), 
+        `image/${format}`, 
+        quality
+      );
+    });
+    
+    imageBlobs.push(blob);
+    
+    // Update progress
+    onProgress?.(20 + Math.floor(((i + 1) / numPages) * 70));
+  }
+  
+  onProgress?.(100);
+  return imageBlobs;
+}
