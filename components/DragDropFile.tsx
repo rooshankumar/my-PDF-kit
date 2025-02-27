@@ -116,8 +116,11 @@ export function DragDropFile({
       preview: createPreview(file)
     })
 
+    // Convert FileList to array to ensure compatibility
+    const filesArray = Array.isArray(fileList) ? fileList : Array.from(fileList);
+
     // Check total number of files
-    if (files.length + fileList.length > maxFiles) {
+    if (files.length + filesArray.length > maxFiles) {
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -126,7 +129,7 @@ export function DragDropFile({
       return
     }
 
-    for (const file of fileList) {
+    for (const file of filesArray) {
       try {
         validateFile(file)
         const preview = createPreview(file)
