@@ -70,9 +70,7 @@ export async function convertToPDF(
 
   const pdfBytes = await pdfDoc.save({
     useObjectStreams: true,
-    addDefaultPage: false,
-    // Removed imageQuality as it's not a valid property
-    compressImages: true,  // keep or remove based on your requirements
+    addDefaultPage: false
   })
 
   onProgress?.(100)
@@ -150,22 +148,22 @@ export const compressImage = async (
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.src = URL.createObjectURL(file)
-    
+
     img.onload = () => {
       URL.revokeObjectURL(img.src)
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')
-      
+
       if (!ctx) {
         reject(new Error('Could not get canvas context'))
         return
       }
-      
+
       canvas.width = img.width
       canvas.height = img.height
-      
+
       ctx.drawImage(img, 0, 0)
-      
+
       canvas.toBlob(
         (blob) => {
           if (blob) {
@@ -178,7 +176,7 @@ export const compressImage = async (
         quality
       )
     }
-    
+
     img.onerror = () => {
       URL.revokeObjectURL(img.src)
       reject(new Error('Could not load image'))
@@ -194,35 +192,35 @@ export const resizeImage = async (
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.src = URL.createObjectURL(file)
-    
+
     img.onload = () => {
       URL.revokeObjectURL(img.src)
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')
-      
+
       if (!ctx) {
         reject(new Error('Could not get canvas context'))
         return
       }
-      
+
       let width = img.width
       let height = img.height
-      
+
       if (width > maxWidth) {
         height = (height * maxWidth) / width
         width = maxWidth
       }
-      
+
       if (height > maxHeight) {
         width = (width * maxHeight) / height
         height = maxHeight
       }
-      
+
       canvas.width = width
       canvas.height = height
-      
+
       ctx.drawImage(img, 0, 0, width, height)
-      
+
       canvas.toBlob(
         (blob) => {
           if (blob) {
@@ -235,7 +233,7 @@ export const resizeImage = async (
         0.9
       )
     }
-    
+
     img.onerror = () => {
       URL.revokeObjectURL(img.src)
       reject(new Error('Could not load image'))
@@ -250,22 +248,22 @@ export const convertToFormat = async (
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.src = URL.createObjectURL(file)
-    
+
     img.onload = () => {
       URL.revokeObjectURL(img.src)
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')
-      
+
       if (!ctx) {
         reject(new Error('Could not get canvas context'))
         return
       }
-      
+
       canvas.width = img.width
       canvas.height = img.height
-      
+
       ctx.drawImage(img, 0, 0)
-      
+
       canvas.toBlob(
         (blob) => {
           if (blob) {
@@ -278,7 +276,7 @@ export const convertToFormat = async (
         0.9
       )
     }
-    
+
     img.onerror = () => {
       URL.revokeObjectURL(img.src)
       reject(new Error('Could not load image'))
@@ -345,9 +343,10 @@ export async function createPDFFromImages(
     onProgress?.(Math.round((processedImages / images.length) * 100))
   }
 
+  // Only include valid properties for SaveOptions
   const saveOptions: SaveOptions = {
     useObjectStreams: true,
-    addDefaultPage: false,
+    addDefaultPage: false
   }
 
   return await pdfDoc.save(saveOptions)
@@ -390,7 +389,7 @@ export async function mergePDFs(
     for (const page of copiedPages) {
       const pageWidth = page.getWidth()
       const pageHeight = page.getHeight()
-      
+
       if (pageWidth !== format[0] || pageHeight !== format[1]) {
         const newPageSize: PageSize = [format[0], format[1]]
         const newPage = mergedPdf.addPage(newPageSize)
@@ -414,9 +413,10 @@ export async function mergePDFs(
     onProgress?.(Math.round((processedFiles / files.length) * 100))
   }
 
+  // Only include valid properties for SaveOptions
   const saveOptions: SaveOptions = {
     useObjectStreams: true,
-    addDefaultPage: false,
+    addDefaultPage: false
   }
 
   return await mergedPdf.save(saveOptions)
