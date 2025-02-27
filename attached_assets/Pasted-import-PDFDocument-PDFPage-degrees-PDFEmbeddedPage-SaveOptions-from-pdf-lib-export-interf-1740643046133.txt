@@ -23,6 +23,7 @@ export async function convertToPDF(
   const {
     quality = 0.8,
     pageSize = 'A4',
+    orientation = 'portrait',
     margin = 20,
     onProgress
   } = options
@@ -33,7 +34,7 @@ export async function convertToPDF(
 
   const imageBytes = await file.arrayBuffer()
   let image
-
+  
   if (file.type.includes('jpeg') || file.type.includes('jpg')) {
     image = await pdfDoc.embedJpg(imageBytes)
   } else if (file.type.includes('png')) {
@@ -71,10 +72,11 @@ export async function convertToPDF(
   const pdfBytes = await pdfDoc.save({
     useObjectStreams: true,
     addDefaultPage: false,
-    // Removed imageQuality as it's not a valid property
-    compressImages: true,  // keep or remove based on your requirements
+    compressImages: true,
+    imageQuality: quality,
+    compressImages: true
   })
-
+  
   onProgress?.(100)
 
   return new Blob([pdfBytes], { type: 'application/pdf' })
@@ -87,19 +89,22 @@ export async function mergeImagesToPDF(
   const {
     quality = 1,
     pageSize = 'A4',
+    orientation = 'portrait',
     margin = 20,
     onProgress
   } = options
 
+  // Create a new PDF document
   const pdfDoc = await PDFDocument.create()
-
+  
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
     const page = pdfDoc.addPage(PAGE_SIZES[pageSize])
-
+    
+    // Convert image to bytes
     const imageBytes = await file.arrayBuffer()
     let image
-
+    
     if (file.type.includes('jpeg') || file.type.includes('jpg')) {
       image = await pdfDoc.embedJpg(imageBytes)
     } else if (file.type.includes('png')) {
@@ -108,11 +113,13 @@ export async function mergeImagesToPDF(
       continue // Skip unsupported formats
     }
 
+    // Calculate dimensions
     const { width: imgWidth, height: imgHeight } = image
     const pageWidth = page.getWidth()
     const pageHeight = page.getHeight()
     const marginPt = margin * 2.83465 // Convert mm to points
 
+    // Calculate scaling to fit within margins while maintaining aspect ratio
     const availableWidth = pageWidth - (marginPt * 2)
     const availableHeight = pageHeight - (marginPt * 2)
     const scale = Math.min(
@@ -120,11 +127,13 @@ export async function mergeImagesToPDF(
       availableHeight / imgHeight
     )
 
+    // Calculate centered position
     const scaledWidth = imgWidth * scale
     const scaledHeight = imgHeight * scale
     const x = (pageWidth - scaledWidth) / 2
     const y = (pageHeight - scaledHeight) / 2
 
+    // Draw the image
     page.drawImage(image, {
       x,
       y,
@@ -135,13 +144,12 @@ export async function mergeImagesToPDF(
     onProgress?.(Math.round((i + 1) / files.length * 80))
   }
 
+  // Save the PDF
   const pdfBytes = await pdfDoc.save()
   onProgress?.(90)
 
   return new Blob([pdfBytes], { type: 'application/pdf' })
 }
-
-// Other image handling functions remain unchanged
 
 export const compressImage = async (
   file: File,
