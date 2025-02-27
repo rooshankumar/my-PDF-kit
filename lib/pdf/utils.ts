@@ -59,11 +59,8 @@ async function getOptimalCompression(pdfDoc: PDFDocument, originalSize: number):
 
   return bestBytes || await pdfDoc.save({
     useObjectStreams: true,
-    addDefaultPage: false,
-    preservePDFFormFields: true,
-    compress: true,
-    imageQuality: 0.5,
-    compressImages: true
+    addDefaultPage: false
+    // Removed invalid properties that aren't part of SaveOptions
   })
 }
 
