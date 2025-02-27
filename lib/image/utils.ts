@@ -71,6 +71,7 @@ export async function convertToPDF(
   const pdfBytes = await pdfDoc.save({
     useObjectStreams: true,
     addDefaultPage: false
+    // Removed invalid properties
   })
 
   onProgress?.(100)
@@ -93,7 +94,7 @@ export async function mergeImagesToPDF(
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
-    const page = pdfDoc.addPage(PAGE_SIZES[pageSize])
+    const page = pdfDoc.addPage(PAGE_SIZES[pageSize] as [number, number])
 
     const imageBytes = await file.arrayBuffer()
     let image
@@ -133,7 +134,11 @@ export async function mergeImagesToPDF(
     onProgress?.(Math.round((i + 1) / files.length * 80))
   }
 
-  const pdfBytes = await pdfDoc.save()
+  const pdfBytes = await pdfDoc.save({
+    useObjectStreams: true,
+    addDefaultPage: false
+    // Removed invalid properties
+  })
   onProgress?.(90)
 
   return new Blob([pdfBytes], { type: 'application/pdf' })
