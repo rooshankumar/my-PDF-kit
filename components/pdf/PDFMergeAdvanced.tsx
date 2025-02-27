@@ -22,7 +22,7 @@ import {
 import { CloudStorage } from '../CloudStorage'
 import { formatBytes } from '@/lib/pdf/utils'
 import { ArrowUp, ArrowDown, Trash2, FileText } from 'lucide-react'
-import { DragDropContext, Droppable, Draggable, DroppableProps, DraggableProps, DropResult } from 'react-beautiful-dnd'
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 
 type PageSize = 'A4' | 'Letter' | 'Legal' | 'Custom'
 type Orientation = 'portrait' | 'landscape'
