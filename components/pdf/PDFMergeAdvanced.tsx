@@ -22,7 +22,7 @@ import {
 import { CloudStorage } from '../CloudStorage'
 import { formatBytes } from '@/lib/pdf/utils'
 import { ArrowUp, ArrowDown, Trash2, FileText } from 'lucide-react'
-import { DragDropContext, Droppable, Draggable, DroppableProvided, DraggableProvided } from 'react-beautiful-dnd'
+import { DragDropContext, Droppable, Draggable, DroppableProps, DraggableProps, DropResult } from 'react-beautiful-dnd'
 
 type PageSize = 'A4' | 'Letter' | 'Legal' | 'Custom'
 type Orientation = 'portrait' | 'landscape'
@@ -193,7 +193,7 @@ export function PDFMergeAdvanced({ files, onComplete }: PDFMergeAdvancedProps) {
 
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="pdf-list">
-                {(provided: DroppableProvided) => (
+                {(provided) => (
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
@@ -205,7 +205,7 @@ export function PDFMergeAdvanced({ files, onComplete }: PDFMergeAdvancedProps) {
                         draggableId={file.file.file.name}
                         index={index}
                       >
-                        {(provided: DraggableProvided) => (
+                        {(provided) => (
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
