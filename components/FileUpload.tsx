@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react'
@@ -137,31 +136,17 @@ export function FileUpload({
       >
         <input {...getInputProps()} />
         {getDropzoneText()}
-      </div>
-      {files.length > 0 && (
-        <div className="space-y-2">
-          <div className="text-sm font-medium">Selected Files:</div>
-          <ul className="text-sm space-y-1">
+        {files.length > 0 && ( // Only show previews within the dropzone
+          <div className="mt-4"> {/* Added container for previews */}
             {files.map((file, index) => (
-              <li key={index} className="text-muted-foreground">
-                {file.file.name}
-              </li>
+              <div key={index} className="border rounded overflow-hidden" style={{width: '1cm', height: '1cm'}}> {/* Fixed size */}
+                {file.preview && <img src={file.preview} alt={file.file.name} className="object-cover w-full h-full" />}
+              </div>
             ))}
-          </ul>
-          <Button 
-            type="button" 
-            variant="outline" 
-            size="sm"
-            className="w-full mt-2" 
-            onClick={() => {
-              files.forEach(file => URL.revokeObjectURL(file.preview))
-              setFiles([])
-            }}
-          >
-            Clear Files
-          </Button>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
+      {/* Removed the separate file list section to adhere to the requirement of showing previews only in the dropzone */}
     </div>
   )
 }
