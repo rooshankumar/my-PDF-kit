@@ -200,7 +200,6 @@ export const convertPDFToImages = async (
 
   return results
 }
-import { PDFDocument } from 'pdf-lib'
 import * as pdfjs from 'pdfjs-dist'
 import JSZip from 'jszip'
 
@@ -249,41 +248,41 @@ export async function convertPDFToImages(
     quality = 0.8,
     onProgress 
   } = options;
-  
+
   // Load the PDF file
   const arrayBuffer = await file.arrayBuffer();
   onProgress?.(10);
-  
+
   // Load the PDF using pdf.js
   const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
   const numPages = pdf.numPages;
   onProgress?.(20);
-  
+
   const imageBlobs: Blob[] = [];
-  
+
   // For each page, render to canvas and convert to image
   for (let i = 0; i < numPages; i++) {
     const page = await pdf.getPage(i + 1);
     const viewport = page.getViewport({ scale: 2.0 }); // Higher scale for better quality
-    
+
     // Create a canvas element to render the page
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    
+
     if (!context) {
       continue;
     }
-    
+
     // Set canvas dimensions to match the page viewport
     canvas.width = viewport.width;
     canvas.height = viewport.height;
-    
+
     // Render the PDF page to the canvas
     await page.render({
       canvasContext: context,
       viewport: viewport
     }).promise;
-    
+
     // Convert canvas to blob
     const blob = await new Promise<Blob>((resolve) => {
       canvas.toBlob(
@@ -292,13 +291,13 @@ export async function convertPDFToImages(
         quality
       );
     });
-    
+
     imageBlobs.push(blob);
-    
+
     // Update progress
     onProgress?.(20 + Math.floor(((i + 1) / numPages) * 70));
   }
-  
+
   onProgress?.(100);
   return imageBlobs;
 }
