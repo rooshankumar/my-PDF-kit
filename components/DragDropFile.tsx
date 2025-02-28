@@ -250,11 +250,11 @@ export function DragDropFile({
           </p>
         </div>
 
-        {/* File Previews */}
+        {/* File Previews - Inside the drop area */}
         {files.length > 0 && (
-          <div className={cn("grid gap-2", {
+          <div className={cn("grid gap-2 mt-4 border-t pt-4", {
             'grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12': previewSize !== 'small',
-            'grid-cols-4': previewSize === 'small'
+            'grid-cols-4 sm:grid-cols-6 md:grid-cols-8': previewSize === 'small'
           })}>
             {files.map((file, index) => (
               <div

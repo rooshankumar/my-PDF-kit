@@ -3,7 +3,7 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react"
 import { FileWithPreview } from "@/types/files"
 import { useToast } from "@/lib/toast"
-import { FileUpload } from "@/components/FileUpload"
+import { DragDropFile } from "@/components/DragDropFile"; // Assuming this component exists
 import { ImagePreview } from "@/components/ImagePreview"
 import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
@@ -35,7 +35,7 @@ export function ImageToPDF({ files, setFiles }: ImageToPDFProps) {
       const totalSize = files.reduce((sum, file) => sum + file.file.size, 0)
       // Rough estimation of PDF size based on image sizes and quality
       const estimatedPdfSize = Math.round(totalSize * (quality / 100) * 0.8)
-      
+
       setStats({
         totalSize,
         estimatedPdfSize,
@@ -59,7 +59,7 @@ export function ImageToPDF({ files, setFiles }: ImageToPDFProps) {
       for (const file of files) {
         const imageBytes = await file.file.arrayBuffer()
         let image
-        
+
         if (file.file.type === 'image/jpeg') {
           image = await pdfDoc.embedJpg(imageBytes)
         } else if (file.file.type === 'image/png') {
@@ -115,23 +115,23 @@ export function ImageToPDF({ files, setFiles }: ImageToPDFProps) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <FileUpload
-          files={files}
-          setFiles={setFiles}
-          accept={{ 'image/jpeg': ['.jpg', '.jpeg'], 'image/png': ['.png'] }}
-          maxFiles={10}
-          multiple={true}
-        />
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium">Upload Images</h3>
+        <div className="relative">
+          <DragDropFile
+            files={files}
+            setFiles={setFiles}
+            onFilesSelected={(newFiles) => setFiles(newFiles)}
+            acceptedFileTypes={['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']}
+            maxFileSize={10}
+            showInBox={true}
+            previewSize="small"
+          />
+        </div>
 
         {files.length > 0 && (
           <div className="space-y-4 mt-6">
-            <ImagePreview 
-              files={files} 
-              setFiles={setFiles}
-              canReorder={true}
-              previewSize="medium"
-            />
+            {/*Removed larger ImagePreview component here*/}
 
             <div className="space-y-2">
               <div className="flex justify-between">
@@ -188,8 +188,8 @@ export function ImageToPDF({ files, setFiles }: ImageToPDFProps) {
               disabled={isProcessing || !files.length}
               className="w-full"
             >
-              {isProcessing 
-                ? `Converting... ${Math.round(progress)}%` 
+              {isProcessing
+                ? `Converting... ${Math.round(progress)}%`
                 : `Convert ${files.length} Image${files.length === 1 ? '' : 's'} to PDF`
               }
             </Button>
