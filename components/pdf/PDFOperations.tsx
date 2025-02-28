@@ -21,7 +21,8 @@ import {
   Share2
 } from 'lucide-react'
 import { FileWithPreview } from '@/types/files'
-import { compressPDF, mergePDFs, formatBytes, PDFCompressionOptions } from '@/lib/pdf-utils'
+import { compressPDF, mergePDFs, PDFCompressionOptions } from '@/lib/pdf-utils'
+import { formatBytes } from '@/lib/image/utils'
 
 interface PDFOperationsProps {
   files: FileWithPreview[]
