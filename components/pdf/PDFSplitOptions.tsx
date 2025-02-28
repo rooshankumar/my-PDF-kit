@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
 import { BackToHomeButton } from "@/components/shared/BackToHomeButton"
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
