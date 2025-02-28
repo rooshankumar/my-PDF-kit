@@ -92,6 +92,41 @@
   .text-balance {
     text-wrap: balance;
   }
+  
+  /* Rainbow hover effect for back button */
+  .rainbow-back-button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .rainbow-back-button:hover {
+    background-image: linear-gradient(
+      to right, 
+      #E7484F,
+      #F68B1D, 
+      #FCED00,
+      #009E4F,
+      #00AAC3,
+      #732982
+    );
+    animation: slidebg 2s linear infinite;
+    color: white;
+  }
+  
+  /* Sky-blue hover effect for tool cards */
+  .tool-card-hover:hover {
+    background-color: rgba(135, 206, 250, 0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+}
+
+@keyframes slidebg {
+  to {
+    background-position: 20vw;
+  }
 }
 
 @keyframes fadeIn {

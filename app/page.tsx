@@ -77,9 +77,9 @@ export default function HomePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {features.map((feature, index) => (
           <Link href={feature.href} key={index}>
-            <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
+            <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full tool-card-hover">
               <div className="flex items-start space-x-4">
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 transition-colors">
                   {feature.icon}
                 </div>
                 <div>

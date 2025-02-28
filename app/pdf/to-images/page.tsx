@@ -1,4 +1,3 @@
-
 "use client"
 
 import { PDFToImages } from "@/components/pdf/PDFToImages"
@@ -9,13 +8,13 @@ import { useRouter } from "next/navigation"
 
 export default function PDFToImagesPage() {
   const router = useRouter()
-  
+
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
       <Button
         variant="ghost"
         onClick={() => router.push('/')}
-        className="mb-6 flex items-center gap-2 -ml-2"
+        className="mb-6 flex items-center gap-2 -ml-2 rainbow-back-button"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Home

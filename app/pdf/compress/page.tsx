@@ -7,6 +7,8 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Link from 'next/link';
+
 
 export default function PDFCompressPage() {
   const [files, setFiles] = useState<FileWithPreview[]>([])
@@ -14,14 +16,10 @@ export default function PDFCompressPage() {
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
-      <Button
-        variant="ghost"
-        onClick={() => router.push('/')}
-        className="mb-6 flex items-center gap-2 -ml-2"
-      >
+      <Link href="/" className="mb-6 flex items-center gap-2 -ml-2 rainbow-back-button">
         <ArrowLeft className="h-4 w-4" />
         Back to Home
-      </Button>
+      </Link>
 
       <div className="space-y-4 mb-6">
         <h1 className="text-3xl font-bold">Compress PDF</h1>

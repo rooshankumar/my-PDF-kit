@@ -17,7 +17,7 @@ export default function ImageToPDFPage() {
       <Button
         variant="ghost"
         onClick={() => router.push('/')}
-        className="mb-6 flex items-center gap-2 -ml-2"
+        className="mb-6 flex items-center gap-2 -ml-2 rainbow-back-button"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Home
@@ -36,3 +36,67 @@ export default function ImageToPDFPage() {
     </div>
   )
 } 
+
+//This CSS needs to be included in a global stylesheet (e.g., globals.css) or your main app CSS
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,600,700');
+
+body{
+  font-family: 'Nunito', sans-serif;
+}
+
+.a{color: #E7484F}
+.b{color: #F68B1D}
+.c{color: #FCED00}
+.d{color: #009E4F}
+.e{color: #00AAC3}
+.f{color:  #732982}
+
+
+.container{
+  margin-top: 150px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.rainbow-back-button{
+  background-color: #343A40;
+  border-radius: 4px;  
+  color: #fff;
+  cursor: pointer;
+  padding: 8px 16px;
+}
+
+.rainbow-back-button:hover{
+   background-image: linear-gradient(
+      to right, 
+      #E7484F,
+      #F68B1D, 
+      #FCED00,
+      #009E4F,
+      #00AAC3,
+      #732982
+    );
+  animation:slidebg 2s linear infinite;
+}
+
+@keyframes slidebg {
+  to {
+    background-position:20vw;
+  }
+}
+
+.tool-button:hover {
+  background-color: #87CEEB; /* Sky blue */
+}
+
+.follow{
+  margin-top: 40px;
+}
+
+.follow a{
+  color: black;
+  padding: 8px 16px;
+  text-decoration: none;
+}
