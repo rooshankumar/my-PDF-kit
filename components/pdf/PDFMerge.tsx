@@ -133,7 +133,7 @@ export function PDFMerge({ files, setFiles }: PDFMergeProps) {
         <div className="space-y-4">
           <ImagePreview
             files={files}
-            setFiles={setFiles}
+            setFiles={(newFiles) => setFiles(newFiles)}
             canReorder={true}
             previewSize="medium"
           />
