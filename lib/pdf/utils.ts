@@ -22,44 +22,44 @@ export const convertPDFToImages = async (
 ): Promise<Blob[]> => {
   const arrayBuffer = await file.arrayBuffer();
   const uint8Array = new Uint8Array(arrayBuffer);
-  
+
   // Load the PDF document using PDF.js
   const loadingTask = pdfjs.getDocument({ data: uint8Array });
   const pdfDocument = await loadingTask.promise;
-  
+
   const numPages = pdfDocument.numPages;
   const imageBlobs: Blob[] = [];
-  
+
   for (let i = 1; i <= numPages; i++) {
     // Update progress
     if (progressCallback) {
       progressCallback((i / numPages) * 100);
     }
-    
+
     // Get the page
     const page = await pdfDocument.getPage(i);
-    
+
     // Determine viewport scale (adjust as needed for desired image size)
     const viewport = page.getViewport({ scale: 2.0 });
-    
+
     // Create a canvas element to render the page
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    
+
     if (!context) {
       throw new Error('Failed to get canvas context');
     }
-    
+
     // Set canvas dimensions to match the viewport
     canvas.width = viewport.width;
     canvas.height = viewport.height;
-    
+
     // Render the page to the canvas
     await page.render({
       canvasContext: context,
       viewport: viewport
     }).promise;
-    
+
     // Convert canvas to blob of specified format
     const blob = await new Promise<Blob>((resolve) => {
       canvas.toBlob(
@@ -71,10 +71,10 @@ export const convertPDFToImages = async (
         quality / 100
       );
     });
-    
+
     imageBlobs.push(blob);
   }
-  
+
   return imageBlobs;
 };
 
@@ -98,17 +98,17 @@ export const createZipFromBlobs = async (
   }
 ): Promise<Blob> => {
   const zip = new JSZip();
-  
+
   blobs.forEach((blob, index) => {
     zip.file(`${options.filename}-page-${index + 1}.${options.format}`, blob);
   });
-  
+
   const zipBlob = await zip.generateAsync({ type: 'blob' });
-  
+
   if (options.autoDownload) {
     await downloadBlob(zipBlob, `${options.filename}.zip`);
   }
-  
+
   return zipBlob;
 };
 
@@ -230,18 +230,6 @@ export async function mergePDFs(files: File[], onProgress?: (progress: number) =
   return new Blob([pdfBytes], { type: 'application/pdf' })
 }
 
-export const createZipFromBlobs = async (
-  blobs: Blob[],
-  names: string[]
-): Promise<Blob> => {
-  const zip = new JSZip()
-
-  for (let i = 0; i < blobs.length; i++) {
-    zip.file(names[i], blobs[i])
-  }
-
-  return await zip.generateAsync({ type: 'blob' })
-}
 
 export const downloadBlob = (blob: Blob, filename: string) => {
   const url = URL.createObjectURL(blob)

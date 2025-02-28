@@ -1,11 +1,14 @@
 
-import * as pdfjs from 'pdfjs-dist';
+"use client";
+
+import { GlobalWorkerOptions } from 'pdfjs-dist/build/pdf.js';
+import * as pdfjsLib from 'pdfjs-dist/build/pdf.js';
 
 // Setup for PDF.js in browser environment
 export function setupPdfJs() {
-  // Set worker path to use the worker file from public directory (must be copied there)
+  // Set worker path to use the worker file from public directory
   if (typeof window !== 'undefined') {
-    pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+    GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
   }
 }
 
@@ -15,4 +18,4 @@ if (typeof window !== 'undefined') {
 }
 
 // Export pdfjs for use in other files
-export { pdfjs };
+export const pdfjs = pdfjsLib;

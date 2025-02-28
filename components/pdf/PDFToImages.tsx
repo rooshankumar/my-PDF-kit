@@ -46,41 +46,13 @@ export function PDFToImages() {
         description: `PDF converted to ${images.length} images successfully`
       })
 
-      // Download as zip if multiple pages
-      if (images.length > 1) {
-        const zip = new JSZip()
-        images.forEach((blob, i) => {
-          zip.file(`page-${i + 1}.jpg`, blob)
-        })
-        const content = await zip.generateAsync({ type: "blob" })
-        const url = URL.createObjectURL(content)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = `${files[0].file.name.replace('.pdf', '')}-images.zip`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        URL.revokeObjectURL(url)
-      } else {
-        const url = URL.createObjectURL(images[0])
-        const link = document.createElement('a')
-        link.href = url
-        link.download = files[0].file.name.replace('.pdf', '.jpg')
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        URL.revokeObjectURL(url)
-      }
 
       // Cleanup preview URLs
       // Assuming imageUrls is defined elsewhere and holds the URLs to revoke
       //  This part needs clarification in the original code or prompt.
       // imageUrls.forEach(URL.revokeObjectURL)
 
-      toast({
-        title: "Success",
-        description: `Converted ${images.length} page${images.length === 1 ? '' : 's'} to images`
-      })
+
     } catch (error) {
       console.error('Conversion failed:', error)
       toast({
