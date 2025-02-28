@@ -31,7 +31,7 @@ export async function mergePDFs(files: File[]): Promise<Blob> {
   return new Blob([pdfBytes], { type: 'application/pdf' })
 }
 
-export async function compressPDF(file: File, quality: 'low' | 'medium' | 'high'): Promise<Blob> {
+export async function compressPDF(file: File, quality?: 'low' | 'medium' | 'high'): Promise<Blob> {
   const arrayBuffer = await file.arrayBuffer()
   const pdfDoc = await PDFDocument.load(arrayBuffer)
   
@@ -42,7 +42,7 @@ export async function compressPDF(file: File, quality: 'low' | 'medium' | 'high'
     high: { imageQuality: 0.7, compress: true }
   }
   
-  const settings = compressionSettings[quality]
+  const settings = quality ? compressionSettings[quality] : compressionSettings.medium
   const pdfBytes = await pdfDoc.save({
     useObjectStreams: true,
     ...settings

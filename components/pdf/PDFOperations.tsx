@@ -45,7 +45,7 @@ export function PDFOperations({
     setIsProcessing(true)
     
     try {
-      const compressedBlob = await compressPDF(files[0].file)
+      const compressedBlob = await compressPDF(files[0].file, 'medium')
       const url = URL.createObjectURL(compressedBlob)
       setProcessedFileUrl(url)
       onProcessComplete?.(url)
