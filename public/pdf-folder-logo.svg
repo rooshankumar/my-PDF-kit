@@ -4,13 +4,13 @@
   <path d="M472 120H260L212 72H40a24 24 0 00-24 24v320a24 24 0 0024 24h432a24 24 0 0024-24V144a24 24 0 00-24-24z" fill="#2563EB"/>
   <path d="M472 120H40a24 24 0 00-24 24v32h480v-32a24 24 0 00-24-24z" fill="#1E40AF"/>
   
-  <!-- PDF text -->
-  <rect x="140" y="200" width="232" height="140" rx="16" fill="white"/>
-  <path d="M170 260h16.5a20 20 0 0110.5 2.8 19.3 19.3 0 017.1 7.7 22 22 0 012.5 10.5 22 22 0 01-2.5 10.5 19.3 19.3 0 01-7.1 7.7 20 20 0 01-10.5 2.8H170v-42zm16.5 36c4.2 0 7.5-1.2 9.9-3.6 2.4-2.4 3.6-5.7 3.6-9.9s-1.2-7.5-3.6-9.9c-2.4-2.4-5.7-3.6-9.9-3.6H176v27h10.5z" fill="#2563EB"/>
-  <path d="M228 260h30v6h-24v12h22v6h-22v12h24v6h-30v-42z" fill="#2563EB"/>
-  <path d="M281 260h6v36h22v6h-28v-42z" fill="#2563EB"/>
+  <!-- Simple document icon instead of text -->
+  <rect x="170" y="200" width="172" height="220" rx="12" fill="white"/>
+  <path d="M190 220h132" stroke="#2563EB" stroke-width="8" stroke-linecap="round"/>
+  <path d="M190 250h132" stroke="#2563EB" stroke-width="8" stroke-linecap="round"/>
+  <path d="M190 280h132" stroke="#2563EB" stroke-width="8" stroke-linecap="round"/>
+  <path d="M190 310h80" stroke="#2563EB" stroke-width="8" stroke-linecap="round"/>
   
-  <!-- Decorative elements -->
-  <circle cx="256" cy="370" r="10" fill="#2563EB"/>
-  <rect x="246" y="170" width="20" height="10" rx="5" fill="#1E40AF"/>
+  <!-- Corner fold effect on document -->
+  <path d="M322 220l20-20v20h-20z" fill="#2563EB"/>
 </svg>
