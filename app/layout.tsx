@@ -39,6 +39,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/pdf-folder-logo.svg" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"

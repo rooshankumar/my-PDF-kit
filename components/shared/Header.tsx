@@ -13,6 +13,7 @@ export function Header() {
       <div className="container flex h-14 items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center space-x-2">
+            <img src="/pdf-folder-logo.svg" alt="PDF Kit Logo" className="h-8 w-8" />
             <span className="font-bold text-xl">My PDF Kit</span>
           </Link>
         </div>
