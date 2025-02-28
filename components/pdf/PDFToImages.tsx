@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -36,7 +35,7 @@ export function PDFToImages({ files, setFiles }: PDFToImagesProps) {
         format,
         quality
       );
-      
+
       if (!images || images.length === 0) {
         throw new Error("No images were generated");
       }
@@ -77,7 +76,7 @@ export function PDFToImages({ files, setFiles }: PDFToImagesProps) {
     <div className="space-y-6">
       <DragDropFile
         files={files}
-        setFiles={(newFiles) => setFiles(newFiles)}
+        setFiles={(newFiles: FileWithPreview[]) => setFiles(newFiles)}
         onFilesSelected={(newFiles) => setFiles(newFiles)}
         acceptedFileTypes={['application/pdf']}
         maxFileSize={50}
@@ -103,7 +102,7 @@ export function PDFToImages({ files, setFiles }: PDFToImagesProps) {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="quality">Quality: {quality}%</Label>
               <Slider
@@ -124,7 +123,7 @@ export function PDFToImages({ files, setFiles }: PDFToImagesProps) {
           >
             {isProcessing ? 'Converting...' : 'Convert to Images'}
           </Button>
-          
+
           {isProcessing && (
             <div className="space-y-2">
               <Progress value={progress} />
