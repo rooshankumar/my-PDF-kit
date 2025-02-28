@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,600,700');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -79,6 +81,8 @@
 
   body {
     @apply bg-background text-foreground transition-colors duration-200;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
   }
 }
 

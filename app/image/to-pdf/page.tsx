@@ -28,13 +28,6 @@ export default function ImageToPDFPage() {
   )
 } 
 
-//This CSS needs to be included in a global stylesheet (e.g., globals.css) or your main app CSS
-@import url('https://fonts.googleapis.com/css?family=Nunito:400,600,700');
-
-body{
-  font-family: 'Nunito', sans-serif;
-}
-
 .a{color: #E7484F}
 .b{color: #F68B1D}
 .c{color: #FCED00}
