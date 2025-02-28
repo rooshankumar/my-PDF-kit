@@ -1,17 +1,35 @@
 // app/layout.tsx
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import '@/app/globals.css'
-import { Providers } from "./providers"
-import { Header } from '@/components/shared/Header'
-import { Footer } from '@/components/footer'
-
+import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/toaster"
+import { Header } from "@/components/shared/Header"
+import { Footer } from "@/components/shared/Footer"
+import { GoogleAnalytics } from '@/components/GoogleAnalytics'
+import { GA_TRACKING_ID } from '@/lib/analytics'
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata: Metadata = {
-  title: 'My PDF Kit - All-in-One PDF and Image Tools',
-  description: 'Convert, compress, and manage your PDFs and images with our powerful, easy-to-use tools.',
+export const metadata = {
+  metadataBase: new URL('https://your-domain.com'),
+  title: {
+    default: 'My PDF Kit - Free Online PDF Tools',
+    template: '%s | My PDF Kit'
+  },
+  description: 'Free online PDF tools to merge, split, compress, convert PDFs. Easy to use, no installation required.',
+  keywords: 'pdf tools, pdf editor, merge pdf, split pdf, compress pdf, convert pdf, my pdf kit',
+  authors: [{ name: 'Roshaan Kumar' }],
+  creator: 'Roshaan Kumar',
+  publisher: 'My PDF Kit',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
 }
 
 export default function RootLayout({
@@ -21,16 +39,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
-        <Providers>
-          <div className="min-h-screen flex flex-col">
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="relative min-h-screen flex flex-col">
             <Header />
             <main className="flex-1">
               {children}
             </main>
             <Footer />
           </div>
-        </Providers>
+          <Toaster />
+          <GoogleAnalytics />
+        </ThemeProvider>
       </body>
     </html>
   )
