@@ -5,9 +5,8 @@ import { ImageCompress } from "@/components/image/ImageCompress"
 import { ImageToPDF } from "@/components/image/ImageToPDF"
 import { FileWithPreview } from "@/types/files"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { BackToHomeButton } from "@/components/shared/BackToHomeButton"
 
 export default function ImageToolsPage() {
   const [files, setFiles] = useState<FileWithPreview[]>([])
@@ -28,14 +27,7 @@ export default function ImageToolsPage() {
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
-      <Button
-        variant="ghost"
-        onClick={() => router.push('/')}
-        className="mb-6 flex items-center gap-2 -ml-2"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to Home
-      </Button>
+      <BackToHomeButton />
 
       <div className="space-y-4 mb-6">
         <h1 className="text-3xl font-bold">{titles[tool as keyof typeof titles].title}</h1>

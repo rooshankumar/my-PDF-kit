@@ -2,9 +2,7 @@
 
 import { ReactNode } from "react"
 import { motion } from "framer-motion"
-import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { BackToHomeButton } from "@/components/shared/BackToHomeButton"
 
 interface ToolLayoutProps {
   children: ReactNode
@@ -24,17 +22,7 @@ export function ToolLayout({
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-            className="mb-6 text-muted-foreground hover:text-foreground"
-          >
-            <Link href="/">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Tools
-            </Link>
-          </Button>
+          <BackToHomeButton />
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

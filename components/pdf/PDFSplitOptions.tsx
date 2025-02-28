@@ -1,8 +1,7 @@
-
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
+import { BackToHomeButton } from "@/components/shared/BackToHomeButton"
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
@@ -29,7 +28,6 @@ import {
 import { useToast } from "@/components/ui/use-toast"
 import { downloadBlob, createZipFromBlobs } from "@/lib/file-utils"
 import { splitPDF as splitPDFByPages } from "@/lib/pdf-utils"
-import { ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface PDFSplitOptionsProps {
@@ -74,7 +72,7 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
 
   const validateInput = (): boolean => {
     setError('')
-    
+
     switch (splitMode) {
       case 'pages':
         if (!selectedPages.trim()) {
@@ -88,7 +86,7 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
           return false
         }
         break
-        
+
       case 'range':
         if (!pageRanges.trim()) {
           setError('Please enter page ranges')
@@ -105,7 +103,7 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
         }
         break
     }
-    
+
     return true
   }
 
@@ -118,14 +116,14 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
       const arrayBuffer = await file.file.arrayBuffer()
       const pdfDoc = await PDFDocument.load(arrayBuffer)
       const pageCount = pdfDoc.getPageCount()
-      
+
       let pagesToProcess: number[] = []
-      
+
       switch (splitMode) {
         case 'pages':
           pagesToProcess = selectedPages.split(',').map(p => parseInt(p.trim()))
           break
-          
+
         case 'range':
           const ranges = pageRanges.split(',')
           ranges.forEach(range => {
@@ -135,7 +133,7 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
             }
           })
           break
-          
+
         case 'individual':
           pagesToProcess = Array.from({ length: pageCount }, (_, i) => i + 1)
           break
@@ -144,14 +142,14 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
       const totalOperations = pagesToProcess.length
       const blobs = await splitPDFByPages(file.file, pagesToProcess)
       const baseName = file.file.name.replace('.pdf', '')
-      
+
       const downloadOptions = {
         filename: baseName,
         format: 'pdf'
       }
-      
+
       await createZipFromBlobs(blobs, downloadOptions)
-      
+
       const urls = blobs.map(blob => URL.createObjectURL(blob))
       onProcessComplete?.(urls)
 
@@ -175,14 +173,7 @@ export function PDFSplitOptions({ files, onProcessComplete }: PDFSplitOptionsPro
 
   return (
     <div className="space-y-6">
-      <Button
-        variant="ghost"
-        onClick={() => router.push('/tools')}
-        className="mb-4 flex items-center gap-2"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to Tools
-      </Button>
+      <BackToHomeButton />
 
       <Card>
         <CardHeader>
