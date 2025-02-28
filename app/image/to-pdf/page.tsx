@@ -4,24 +4,15 @@ import { useState } from "react"
 import { ImageToPDF } from "@/components/image/ImageToPDF"
 import { FileWithPreview } from "@/types/files"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { BackToHomeButton } from "@/components/shared/BackToHomeButton" // Added import
 
 export default function ImageToPDFPage() {
   const [files, setFiles] = useState<FileWithPreview[]>([])
-  const router = useRouter()
+  //const router = useRouter()  //Removed as not used
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
-      <Button
-        variant="ghost"
-        onClick={() => router.push('/')}
-        className="mb-6 flex items-center gap-2 -ml-2 rainbow-back-button"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to Home
-      </Button>
+      <BackToHomeButton /> {/* Replaced Back button */}
 
       <div className="space-y-4 mb-6">
         <h1 className="text-3xl font-bold">Convert Images to PDF</h1>

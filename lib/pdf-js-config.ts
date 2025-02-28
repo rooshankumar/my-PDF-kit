@@ -2,7 +2,7 @@
 import * as PDFJS from 'pdfjs-dist';
 
 if (typeof window !== 'undefined') {
-  // Use the correct path to the worker file in public directory
+  // Use the local worker file from public directory
   PDFJS.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
 }
 

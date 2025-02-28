@@ -4,22 +4,16 @@ import { useState } from "react"
 import { PDFCompress } from "@/components/pdf/PDFCompress"
 import { FileWithPreview } from "@/types/files"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
-import { useRouter } from "next/navigation"
-import Link from 'next/link';
+import { BackToHomeButton } from "@/components/shared/BackToHomeButton"
 
 
 export default function PDFCompressPage() {
   const [files, setFiles] = useState<FileWithPreview[]>([])
-  const router = useRouter()
+  //const router = useRouter() // This line is removed as it's not used
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
-      <Link href="/" className="mb-6 flex items-center gap-2 -ml-2 rainbow-back-button">
-        <ArrowLeft className="h-4 w-4" />
-        Back to Home
-      </Link>
+      <BackToHomeButton />
 
       <div className="space-y-4 mb-6">
         <h1 className="text-3xl font-bold">Compress PDF</h1>

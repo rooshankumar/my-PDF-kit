@@ -5,8 +5,7 @@ import * as pdfjs from 'pdfjs-dist'
 import JSZip from 'jszip'
 import PDFJS from '@/lib/pdf-js-config'; // Added import for PDFJS config
 
-// Initialize PDF.js worker -  No change needed here as the edited code handles PDF loading differently.
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+// Use the configured worker from pdf-js-config.ts
 
 export const formatBytes = (bytes: number) => {
   if (bytes === 0) return '0 Bytes'
