@@ -17,7 +17,7 @@ export default function PDFMergePage() {
       <Button
         variant="ghost"
         onClick={() => router.push('/')}
-        className="mb-6 flex items-center gap-2 -ml-2"
+        className="mb-6 flex items-center gap-2 -ml-2 rainbow-back-button"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Home
