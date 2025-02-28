@@ -1,7 +1,7 @@
+
 "use client"
 
 import { useState } from 'react'
-import { Navigation } from '@/components/navigation' // Ensure this path is correct
 import { Progress } from '@/components/ui/progress'
 import { usePathname } from 'next/navigation'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -14,7 +14,6 @@ export default function ToolsLayout({
 }) {
   return (
     <div className="flex flex-col min-h-screen">
-      <Navigation />
       <main className="flex-1">{children}</main>
     </div>
   )
