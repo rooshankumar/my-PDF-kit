@@ -92,19 +92,14 @@
   .text-balance {
     text-wrap: balance;
   }
-
+  
   /* Rainbow hover effect for back button */
   .rainbow-back-button {
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
-    background-color: #343A40;
-    border-radius: 4px;  
-    color: #fff;
-    cursor: pointer;
-    padding: 8px 16px;
   }
-
+  
   .rainbow-back-button:hover {
     background-image: linear-gradient(
       to right, 
@@ -118,10 +113,10 @@
     animation: slidebg 2s linear infinite;
     color: white;
   }
-
+  
   /* Green hover effect for tool cards */
   .tool-card-hover:hover {
-    background-color: #32de84;
+    background-color: rgba(50, 222, 132, 0.1);
     transform: translateY(-2px);
     transition: all 0.3s ease;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -161,8 +156,4 @@
 .animate-gradient-x {
   animation: gradient-x 3s ease infinite;
   background-size: 200% 200%;
-}
-
-.dark .tool-card-hover:hover {
-  background-color: #32de84;
 }
