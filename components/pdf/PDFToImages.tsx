@@ -77,7 +77,7 @@ export function PDFToImages({ files, setFiles }: PDFToImagesProps) {
     <div className="space-y-6">
       <DragDropFile
         files={files}
-        setFiles={(newFiles) => setFiles(newFiles)}
+        setFiles={setFiles}
         onFilesSelected={(newFiles) => setFiles(newFiles)}
         acceptedFileTypes={['application/pdf']}
         maxFileSize={50}
