@@ -15,10 +15,6 @@ export function Header() {
           <Link href="/" className="flex items-center space-x-2">
             <span className="font-bold text-xl">My PDF Kit</span>
           </Link>
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/tools/pdf" className="text-sm font-medium hover:text-primary">PDF Tools</Link>
-            <Link href="/tools/image" className="text-sm font-medium hover:text-primary">Image Tools</Link>
-          </nav>
         </div>
         <div className="flex items-center space-x-4">
           <ModeToggle />
