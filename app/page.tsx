@@ -13,6 +13,7 @@ import {
   Images
 } from "lucide-react"
 import Link from "next/link"
+import Script from "next/script" // Import Next.js Script component
 
 interface Feature {
   title: string
@@ -63,6 +64,12 @@ const features: Feature[] = [
 export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-12">
+      {/* Inject External Script */}
+      <Script
+        strategy="afterInteractive"
+        src="//pl25991753.effectiveratecpm.com/e9/a1/55/e9a155569b7769daf0102e8639509723.js"
+      />
+
       {/* Hero Section */}
       <section className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">
