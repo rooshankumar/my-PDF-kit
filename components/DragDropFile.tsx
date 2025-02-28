@@ -10,7 +10,7 @@ import { Upload, X, FileText, Image as ImageIcon } from 'lucide-react'
 interface DragDropFileProps {
   onFilesSelected: (files: FileWithPreview[]) => void
   files: FileWithPreview[]
-  setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[]>>
+  setFiles: (files: FileWithPreview[]) => void
   acceptedFileTypes?: string[]
   maxFileSize?: number // in MB
   previewSize?: 'small' | 'medium' | 'large'
@@ -175,16 +175,14 @@ export function DragDropFile({
   }, [processFiles])
 
   const removeFile = useCallback((indexToRemove: number) => {
-    setFiles((prevFiles) => {
-      const fileToRemove = prevFiles[indexToRemove]
-      if (fileToRemove.preview) {
-        URL.revokeObjectURL(fileToRemove.preview)
-      }
-      const newFiles = prevFiles.filter((_, index) => index !== indexToRemove)
-      onFilesSelected(newFiles)
-      return newFiles
-    })
-  }, [setFiles, onFilesSelected])
+    const fileToRemove = files[indexToRemove]
+    if (fileToRemove.preview) {
+      URL.revokeObjectURL(fileToRemove.preview)
+    }
+    const newFiles = files.filter((_, index) => index !== indexToRemove)
+    setFiles(newFiles)
+    onFilesSelected(newFiles)
+  }, [files, setFiles, onFilesSelected])
 
   const renderFilePreview = (file: FileWithPreview) => {
     if (file.file.type.startsWith('image/') && file.preview) {
