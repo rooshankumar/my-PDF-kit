@@ -21,7 +21,7 @@ import {
   Share2
 } from 'lucide-react'
 import { FileWithPreview } from '@/types/files'
-import { compressPDF, mergePDFs, formatBytes } from '@/lib/pdf/utils'
+import { compressPDF, mergePDFs, formatBytes, PDFCompressionOptions } from '@/lib/pdf-utils'
 
 interface PDFOperationsProps {
   files: FileWithPreview[]
@@ -43,9 +43,9 @@ export function PDFOperations({
   const handleCompress = async () => {
     if (!files.length) return
     setIsProcessing(true)
-    
+
     try {
-      const compressedBlob = await compressPDF(files[0].file, 'medium')
+      const compressedBlob = await compressPDF(files[0].file, {level: 'medium'})
       const url = URL.createObjectURL(compressedBlob)
       setProcessedFileUrl(url)
       onProcessComplete?.(url)
@@ -59,7 +59,7 @@ export function PDFOperations({
   const handleMerge = async () => {
     if (files.length < 2) return
     setIsProcessing(true)
-    
+
     try {
       const mergedBlob = await mergePDFs(files.map(f => f.file))
       const url = URL.createObjectURL(mergedBlob)
