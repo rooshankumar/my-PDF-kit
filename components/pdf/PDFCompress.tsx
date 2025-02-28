@@ -36,8 +36,8 @@ export function PDFCompress({ files, setFiles }: PDFCompressProps) {
       setIsProcessing(true)
       setProgress(10)
 
-      const file = files[0]
-      const fileBuffer = await file.arrayBuffer()
+      const fileWithPreview = files[0]
+      const fileBuffer = await fileWithPreview.file.arrayBuffer()
 
       // Load the PDF document
       const pdfDoc = await PDFDocument.load(fileBuffer)
