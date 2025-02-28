@@ -1,10 +1,31 @@
-// Assuming necessary imports like 'Button', 'ArrowLeft', and 'router' are present.  Also assuming a CSS class 'rainbow-back-button' is defined.
 
-<Button
-        variant="ghost"
-        onClick={() => router.push('/')}
-        className="mb-6 flex items-center gap-2 -ml-2 rainbow-back-button"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to Home
-      </Button>
+"use client"
+
+import { useState } from "react"
+import { FileWithPreview } from "@/types/files"
+import { Card } from "@/components/ui/card"
+import { BackToHomeButton } from "@/components/shared/BackToHomeButton"
+
+export default function ImageCompressPage() {
+  const [files, setFiles] = useState<FileWithPreview[]>([])
+
+  return (
+    <div className="max-w-5xl mx-auto py-8 px-4">
+      <BackToHomeButton />
+
+      <div className="space-y-4 mb-6">
+        <h1 className="text-3xl font-bold">Compress Images</h1>
+        <p className="text-muted-foreground">
+          Reduce image file size while maintaining quality
+        </p>
+      </div>
+
+      <Card className="p-6">
+        {/* Replace with your image compression component */}
+        <div className="p-4 text-center">
+          <p>Image compression functionality will be implemented here</p>
+        </div>
+      </Card>
+    </div>
+  )
+}
