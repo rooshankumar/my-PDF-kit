@@ -64,7 +64,7 @@ export function PDFCompress({ files, setFiles }: PDFCompressProps) {
       setProgress(90)
 
       // Download the compressed PDF
-      const fileName = file.name.replace('.pdf', '_compressed.pdf')
+      const fileName = fileWithPreview.file.name.replace('.pdf', '_compressed.pdf')
       downloadBlob(new Blob([compressedPdfBytes], { type: 'application/pdf' }), fileName)
 
       toast({
