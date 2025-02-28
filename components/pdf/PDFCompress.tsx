@@ -4,12 +4,12 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { FileWithPreview } from "@/types/files"
-import DragDropFile from "@/components/DragDropFile"
+import { DragDropFile } from "@/components/DragDropFile"
 import { PDFDocument } from "pdf-lib"
 import { Progress } from "@/components/ui/progress"
 import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
-import { downloadFile } from "@/lib/file-utils"
+import { downloadBlob } from "@/lib/file-utils"
 
 interface PDFCompressProps {
   files: FileWithPreview[]
@@ -65,7 +65,7 @@ export function PDFCompress({ files, setFiles }: PDFCompressProps) {
 
       // Download the compressed PDF
       const fileName = file.name.replace('.pdf', '_compressed.pdf')
-      downloadFile(new Blob([compressedPdfBytes], { type: 'application/pdf' }), fileName)
+      downloadBlob(new Blob([compressedPdfBytes], { type: 'application/pdf' }), fileName)
 
       toast({
         title: "PDF compressed successfully",
