@@ -1,4 +1,6 @@
 
+'use client';
+
 import { usePathname } from 'next/navigation';
 import { Helmet } from 'react-helmet';
 
