@@ -7,6 +7,20 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { SEO } from '@/components/shared/SEO';
+
+const mergeSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PDF Merge Tool",
+  "applicationCategory": "WebApplication",
+  "operatingSystem": "All",
+  "offers": {
+    "@type": "Offer",
+    "price": "0"
+  },
+  "description": "Combine multiple PDFs into one document easily and for free. No registration required."
+};
 
 export default function PDFMergePage() {
   const [files, setFiles] = useState<FileWithPreview[]>([])
@@ -14,6 +28,12 @@ export default function PDFMergePage() {
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
+      <SEO 
+        title="Merge PDF Files Online | Free PDF Combiner Tool"
+        description="Combine multiple PDFs into one document easily and for free. No registration required."
+        keywords="merge pdf, combine pdf, join pdf files, pdf merger, free pdf combiner"
+        schema={mergeSchema}
+      />
       <Button
         variant="ghost"
         onClick={() => router.push('/')}

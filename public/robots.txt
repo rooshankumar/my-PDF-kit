@@ -1,4 +1,14 @@
+
+# www.robotstxt.org
+
 User-agent: *
 Allow: /
 
-Sitemap: https://your-site-url.netlify.app/sitemap.xml 
+# Sitemaps
+Sitemap: https://mypdfkit.com/sitemap.xml
+
+# Directories
+Disallow: /.git/
+Disallow: /.github/
+Disallow: /node_modules/
+Disallow: /.next/

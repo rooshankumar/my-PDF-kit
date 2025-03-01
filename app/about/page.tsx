@@ -1,10 +1,23 @@
-import React from 'react';
+import { SEO } from '@/components/shared/SEO';
+
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About My PDF Kit",
+  "description": "Learn about My PDF Kit, our mission, and why we're the best choice for your PDF needs."
+};
 
 export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <SEO 
+        title="About Us | My PDF Kit"
+        description="Learn about My PDF Kit, our mission, and why we're the best choice for your PDF needs."
+        keywords="about my pdf kit, pdf tools company, online pdf service"
+        schema={aboutSchema}
+      />
       <h1 className="text-4xl font-bold mb-6">About PDF Kit</h1>
-      
+
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Our Mission</h2>
         <p className="text-lg mb-4">

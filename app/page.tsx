@@ -61,9 +61,26 @@ const features: Feature[] = [
   }
 ]
 
+import { SEO } from '@/components/shared/SEO';
+
+const homeSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "My PDF Kit",
+  "url": "https://mypdfkit.com",
+  "description": "Free online PDF tools to merge, split, compress, convert PDFs. Easy to use, no installation required.",
+  "operatingSystem": "All",
+  "applicationCategory": "Utility"
+};
+
 export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-12">
+      <SEO 
+        title="My PDF Kit - Free Online PDF Tools"
+        description="Free online PDF tools to merge, split, compress, convert PDFs. Easy to use, no installation required."
+        schema={homeSchema}
+      />
       {/* Inject External Script */}
       <Script
         strategy="afterInteractive"
