@@ -1,0 +1,156 @@
+📌 Replit Prompt for SEO Optimization (Next.js + TypeScript)
+plaintext
+Copy
+Edit
+Optimize my Next.js + TypeScript website for SEO **without affecting functionality**.  
+Ensure all updates are **non-destructive**, keeping the UI and features intact.
+
+### **1️⃣ Update SEO Metadata for Each Page**
+Modify the `<Head>` component in `_app.tsx` or create a custom `<SEO>` component to include:
+   - **Dynamic `<title>` and `<meta>` descriptions** for each tool page.
+   - **Open Graph tags (OG tags)** for social sharing (Facebook, Twitter, LinkedIn).
+   - **Canonical tags** to prevent duplicate content issues.
+   - **Structured data (JSON-LD)** for Google Rich Snippets.
+
+#### **Example for Homepage (`pages/index.tsx`)**
+Replace existing `<Head>` section with:
+```tsx
+import Head from "next/head";
+
+export default function Home() {
+  return (
+    <>
+      <Head>
+        <title>Free PDF Converter Online - Convert, Merge, Compress | MyPDFKit</title>
+        <meta name="description" content="Convert, merge, split & compress PDFs online for free. No registration needed! Fast & secure PDF tools." />
+        <meta name="keywords" content="PDF converter, compress PDF, merge PDF, split PDF, PDF to JPG" />
+        <meta property="og:title" content="MyPDFKit - Best Free PDF Tools" />
+        <meta property="og:description" content="Easily convert, merge, split & compress PDFs online. No sign-up required." />
+        <meta property="og:image" content="/static/preview.png" />
+        <meta property="og:url" content="https://mypdfkit.com" />
+        <link rel="canonical" href="https://mypdfkit.com" />
+      </Head>
+    </>
+  );
+}
+✅ Repeat this for each tool page (compress, merge, convert, edit PDFs).
+
+2️⃣ Create Individual Tool Pages (If Not Already Done)
+Ensure each tool has its own Next.js page for better ranking.
+
+✅ File Structure Example:
+
+lua
+Copy
+Edit
+pages/
+│-- index.tsx  (Homepage)
+│-- convert-pdf-to-jpg.tsx
+│-- compress-pdf.tsx
+│-- merge-pdf.tsx
+│-- edit-pdf.tsx
+✅ Modify each tool page to include an SEO-friendly <Head> section.
+
+📌 Example for Compress PDF (pages/compress-pdf.tsx)
+
+tsx
+Copy
+Edit
+import Head from "next/head";
+
+export default function CompressPDF() {
+  return (
+    <>
+      <Head>
+        <title>Compress PDF Online - Reduce File Size | MyPDFKit</title>
+        <meta name="description" content="Reduce PDF file size online without losing quality. No watermark, no sign-up needed." />
+        <meta property="og:title" content="Compress PDFs Online - Free & Secure" />
+        <meta property="og:url" content="https://mypdfkit.com/compress-pdf" />
+        <link rel="canonical" href="https://mypdfkit.com/compress-pdf" />
+      </Head>
+      <h1>Compress PDF Online</h1>
+      <p>Upload your PDF file and reduce its size without losing quality.</p>
+    </>
+  );
+}
+3️⃣ Add Internal Linking (Navbar & Footer)
+✅ Modify components/Navbar.tsx to include links to all tool pages:
+
+tsx
+Copy
+Edit
+import Link from "next/link";
+
+export default function Navbar() {
+  return (
+    <nav>
+      <ul>
+        <li><Link href="/convert-pdf-to-jpg">Convert PDF to JPG</Link></li>
+        <li><Link href="/compress-pdf">Compress PDF</Link></li>
+        <li><Link href="/merge-pdf">Merge PDF</Link></li>
+        <li><Link href="/edit-pdf">Edit PDF</Link></li>
+      </ul>
+    </nav>
+  );
+}
+✅ Modify components/Footer.tsx to ensure footer links for SEO:
+
+tsx
+Copy
+Edit
+import Link from "next/link";
+
+export default function Footer() {
+  return (
+    <footer>
+      <p>Try our free PDF tools:</p>
+      <ul>
+        <li><Link href="/convert-pdf-to-jpg">PDF to JPG</Link></li>
+        <li><Link href="/compress-pdf">Compress PDF</Link></li>
+        <li><Link href="/merge-pdf">Merge PDF</Link></li>
+        <li><Link href="/edit-pdf">Edit PDF</Link></li>
+      </ul>
+    </footer>
+  );
+}
+📌 Why This is Important?
+
+Google crawls internal links, boosting page rankings.
+Users navigate easily between tools.
+4️⃣ Improve Performance & SEO Score
+✅ Optimize Page Speed:
+
+Use Next.js Image Optimization (next/image) for better load times.
+Enable Lazy Loading for heavy images.
+Use Cloudflare or Vercel Edge Network for caching.
+✅ Add Schema Markup (JSON-LD) for Google Rich Snippets:
+
+Helps Google understand your tool as a Web Application.
+Add this inside <Head> on each tool page.
+tsx
+Copy
+Edit
+<script type="application/ld+json">
+  {`
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "MyPDFKit",
+    "url": "https://mypdfkit.com",
+    "description": "Convert, merge, split, and compress PDFs online for free.",
+    "operatingSystem": "All",
+    "applicationCategory": "Utility"
+  }
+  `}
+</script>
+🚀 Final Steps
+✅ Step 1: Add SEO metadata (titles, descriptions, Open Graph tags) to _app.tsx and individual pages.
+✅ Step 2: Ensure each tool has its own page (compress-pdf.tsx, convert-pdf-to-jpg.tsx).
+✅ Step 3: Improve internal linking in Navbar & Footer.
+✅ Step 4: Optimize performance (lazy loading, Next.js images, caching).
+✅ Step 5: Add Schema Markup (JSON-LD) to improve Google rankings.
+
+⏳ What This Will Do?
+✔ Better SEO rankings → Google will crawl each tool separately.
+✔ More organic traffic → Users will find your tools faster.
+✔ Faster performance → Users won’t bounce due to slow speeds.
