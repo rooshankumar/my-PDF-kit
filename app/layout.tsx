@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { Header } from "@/components/shared/Header"
 import { Footer } from "@/components/shared/Footer"
 import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 import { GA_TRACKING_ID } from '@/lib/analytics'
 
