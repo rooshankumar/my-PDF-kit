@@ -67,7 +67,7 @@ const homeSchema = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "My PDF Kit",
-  "url": "https://mypdfkit.com",
+  "url": "https://mypdfkit.netlify.com",
   "description": "Free online PDF tools to merge, split, compress, convert PDFs. Easy to use, no installation required.",
   "operatingSystem": "All",
   "applicationCategory": "Utility"
