@@ -81,10 +81,15 @@ export default function HomePage() {
         description="Free online PDF tools to merge, split, compress, convert PDFs. Easy to use, no installation required."
         schema={homeSchema}
       />
-      {/* Inject External Script */}
+
+      {/* Inject External Scripts */}
       <Script
         strategy="afterInteractive"
         src="//pl25991753.effectiveratecpm.com/e9/a1/55/e9a155569b7769daf0102e8639509723.js"
+      />
+      <Script
+        strategy="afterInteractive"
+        src="//www.highperformanceformat.com/4d666fdf93d80a362fcea5a1cec89670/invoke.js"
       />
 
       {/* Hero Section */}
