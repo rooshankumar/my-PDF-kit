@@ -14,12 +14,12 @@ import { GA_TRACKING_ID } from '@/lib/analytics'
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  metadataBase: new URL('https://your-domain.com'),
+  metadataBase: new URL('https://mypdfkit.netlify.com'),
   title: {
     default: 'My PDF Kit - Free Online PDF Tools',
     template: '%s | My PDF Kit'
   },
-  description: 'Free online PDF tools to merge, split, compress, convert PDFs. Easy to use, no installation required.',
+  description: 'Free online PDF tools to merge,jpg to pdf, pdf to jpg, compress jpg, compress pdf, resize pdf, edit pdf, pdf, jpg split, compress, convert PDFs. Easy to use, no installation required.',
   keywords: 'pdf tools, pdf editor, merge pdf, split pdf, compress pdf, convert pdf, my pdf kit',
   authors: [{ name: 'Roshaan Kumar' }],
   creator: 'Roshaan Kumar',
