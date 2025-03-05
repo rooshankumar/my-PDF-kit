@@ -1,3 +1,6 @@
+
+'use client'
+
 import Head from 'next/head'
 import { usePathname } from 'next/navigation'
 import Script from 'next/script'
