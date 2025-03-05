@@ -1,51 +1,51 @@
-import { PDFDocument } from 'pdf-lib'
 
-interface MergeOptions {
-  useObjectStreams: boolean
-  addDefaultPage: boolean
-  preservePDFFormFields: true
-  compress: boolean
-  imageQuality: number
-  compressImages: boolean
+import { PDFDocument, PDFPage } from 'pdf-lib'
+
+type MergeOptions = {
+  imageQuality?: number
+  compress?: boolean
 }
 
-export async function mergePDFs(files: File[], onProgress?: (progress: number) => void): Promise<Uint8Array> {
+export async function mergePDFs(
+  files: File[],
+  onProgress?: (progress: number) => void
+): Promise<Uint8Array> {
   try {
     const mergedPdf = await PDFDocument.create()
     let totalPages = 0
-    let processedPages = 0
+    let completedPages = 0
 
-    // First, count total pages
+    // First pass: count total pages
     for (const file of files) {
       const arrayBuffer = await file.arrayBuffer()
-      const pdf = await PDFDocument.load(arrayBuffer)
-      totalPages += pdf.getPageCount()
+      const pdfDoc = await PDFDocument.load(arrayBuffer)
+      totalPages += pdfDoc.getPageIndices().length
     }
 
-    // Merge PDFs with compression
-    for (const file of files) {
+    // Second pass: merge PDFs
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
       const arrayBuffer = await file.arrayBuffer()
-      const pdf = await PDFDocument.load(arrayBuffer)
-      const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices())
+      const pdfDoc = await PDFDocument.load(arrayBuffer)
       
-      pages.forEach(page => {
+      const pages = pdfDoc.getPageIndices()
+      const copiedPages = await mergedPdf.copyPages(pdfDoc, pages)
+      
+      copiedPages.forEach(page => {
         mergedPdf.addPage(page)
-        processedPages++
-        onProgress?.(Math.round((processedPages / totalPages) * 100))
+        completedPages++
+        if (onProgress) {
+          onProgress((completedPages / totalPages) * 100)
+        }
       })
     }
 
-    // Apply compression settings
+    // Try with different quality settings to optimize file size
     const mergeOptions: MergeOptions = {
-      useObjectStreams: true,
-      addDefaultPage: false,
-      preservePDFFormFields: true,
-      compress: true,
       imageQuality: 0.8,
-      compressImages: true
+      compress: true
     }
-
-    // First try with high quality
+    
     let mergedBytes = await mergedPdf.save(mergeOptions)
     let mergedSize = mergedBytes.length
 
@@ -67,4 +67,4 @@ export async function mergePDFs(files: File[], onProgress?: (progress: number) =
     console.error('PDF merge failed:', error)
     throw error
   }
-} 
+}
