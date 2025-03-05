@@ -73,6 +73,16 @@ const homeSchema = {
   "applicationCategory": "Utility"
 };
 
+// Placeholder components for Ad Banners.  Replace with actual components.
+function AdBannerWide() {
+  return <div>Wide Ad Banner</div>;
+}
+
+function AdBannerSecondary() {
+  return <div>Secondary Ad Banner</div>;
+}
+
+
 export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-12">
@@ -91,6 +101,11 @@ export default function HomePage() {
         strategy="afterInteractive"
         src="//www.highperformanceformat.com/4d666fdf93d80a362fcea5a1cec89670/invoke.js"
       />
+      <Script
+        strategy="afterInteractive"
+        src="https://adsterra.com/serve/cpm/banner.js"
+      />
+
 
       {/* Hero Section */}
       <section className="text-center mb-16">
@@ -120,6 +135,11 @@ export default function HomePage() {
           </Link>
         ))}
       </div>
+
+      <div className="my-8">
+          <AdBannerWide />
+          <AdBannerSecondary />
+        </div>
 
       {/* Benefits Section */}
       <section className="mt-16 text-center">

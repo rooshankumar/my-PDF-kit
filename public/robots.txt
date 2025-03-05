@@ -1,4 +1,11 @@
 
+# Allow all web crawlers
 User-agent: *
 Allow: /
+
+# Disallow duplicate or low-value pages
+Disallow: /api/
+Disallow: /_next/
+
+# Sitemap location
 Sitemap: https://mypdfkit.netlify.app/sitemap.xml
