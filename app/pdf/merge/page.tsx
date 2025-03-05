@@ -27,24 +27,7 @@ const mergeSchema = {
 // Example:  https://schema.org/Advertisement
 
 
-function AdBannerWide() {
-  return (
-    <div>
-      <script type="text/javascript">
-        atOptions = {
-          'key': '4d666fdf93d80a362fcea5a1cec89670',
-          'format': 'iframe',
-          'height': 300,
-          'width': 160,
-          'params': {}
-        };
-      </script>
-      <script type="text/javascript" src="//www.highperformanceformat.com/4d666fdf93d80a362fcea5a1cec89670/invoke.js"></script>
-
-      <script type='text/javascript' src='//pl25991753.effectiveratecpm.com/e9/a1/55/e9a155569b7769daf0102e8639509723.js'></script>
-    </div>
-  );
-}
+import { AdBannerWide } from "@/components/Advertisements";
 
 
 export default function PDFMergePage() {
