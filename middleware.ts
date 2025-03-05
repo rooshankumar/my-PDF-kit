@@ -4,14 +4,39 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   try {
-    // Redirect old image compression URL to new one
-    if (request.nextUrl.pathname === '/image/compress') {
+    // Redirect image compression URLs
+    if (request.nextUrl.pathname === '/image/compress' || 
+        request.nextUrl.pathname === '/compress-image' || 
+        request.nextUrl.pathname === '/image-compressor') {
       return NextResponse.redirect(new URL('/tools/image?tool=compress', request.url))
     }
 
-    // Update this redirection for JPG to PDF
-    if (request.nextUrl.pathname === '/image/to-pdf') {
+    // Redirect JPG to PDF URLs
+    if (request.nextUrl.pathname === '/image/to-pdf' || 
+        request.nextUrl.pathname === '/jpg-to-pdf' || 
+        request.nextUrl.pathname === '/convert-image-to-pdf') {
       return NextResponse.redirect(new URL('/tools/image?tool=to-pdf', request.url))
+    }
+
+    // Redirect PDF compression URLs
+    if (request.nextUrl.pathname === '/pdf/compress' || 
+        request.nextUrl.pathname === '/compress-pdf' || 
+        request.nextUrl.pathname === '/pdf-compressor') {
+      return NextResponse.redirect(new URL('/tools/pdf?tool=compress', request.url))
+    }
+
+    // Redirect PDF merge URLs
+    if (request.nextUrl.pathname === '/pdf/merge' || 
+        request.nextUrl.pathname === '/merge-pdf' || 
+        request.nextUrl.pathname === '/pdf-merger') {
+      return NextResponse.redirect(new URL('/tools/pdf?tool=merge', request.url))
+    }
+
+    // Redirect PDF split URLs
+    if (request.nextUrl.pathname === '/pdf/split' || 
+        request.nextUrl.pathname === '/split-pdf' || 
+        request.nextUrl.pathname === '/pdf-splitter') {
+      return NextResponse.redirect(new URL('/tools/pdf?tool=split', request.url))
     }
 
     // Handle API routes
@@ -31,5 +56,19 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/image/:path*', '/api/:path*']
+  matcher: [
+    '/image/:path*', 
+    '/pdf/:path*', 
+    '/api/:path*',
+    '/compress-pdf',
+    '/merge-pdf',
+    '/split-pdf',
+    '/jpg-to-pdf',
+    '/compress-image',
+    '/image-compressor',
+    '/pdf-compressor',
+    '/pdf-merger',
+    '/pdf-splitter',
+    '/convert-image-to-pdf'
+  ]
 }

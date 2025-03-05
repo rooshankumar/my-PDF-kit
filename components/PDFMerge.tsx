@@ -37,19 +37,25 @@ export function PDFMerge({ files, setFiles }: PDFMergeProps) {
     setProgress(0)
 
     try {
+      // Log the files being merged for debugging
+      console.log("Merging files:", files.map(f => f.file.name))
+      
       const mergedBytes = await mergePDFs(
         files.map(f => f.file), 
-        (value) => setProgress(value)
+        (value) => setProgress(Math.round(value))
       )
       
       const blob = new Blob([mergedBytes], { type: 'application/pdf' })
       downloadBlob(blob, 'merged-documents.pdf')
       
       const totalSize = files.reduce((acc, file) => acc + file.file.size, 0)
+      const compressedSize = blob.size
+      
+      console.log(`PDF Merging: ${formatBytes(totalSize)} -> ${formatBytes(compressedSize)}`)
       
       toast({
         title: "Success",
-        description: `Merged ${files.length} PDFs (${formatBytes(totalSize)}) into one document`
+        description: `Merged ${files.length} PDFs (${formatBytes(totalSize)}) into one document (${formatBytes(compressedSize)})`
       })
     } catch (error) {
       console.error("Merge failed:", error)
@@ -60,7 +66,10 @@ export function PDFMerge({ files, setFiles }: PDFMergeProps) {
       })
     } finally {
       setIsProcessing(false)
-      setProgress(0)
+      setProgress(100)
+      
+      // Reset progress after a delay for better UX
+      setTimeout(() => setProgress(0), 1000)
     }
   }
 

@@ -1,8 +1,6 @@
-
-'use client';
-
-import { usePathname } from 'next/navigation';
-import Script from 'next/script';
+import Head from 'next/head'
+import { usePathname } from 'next/navigation'
+import Script from 'next/script'
 
 interface SEOProps {
   title?: string;
@@ -10,22 +8,24 @@ interface SEOProps {
   keywords?: string;
   ogImage?: string;
   ogType?: string;
+  schema?: any;
 }
 
-export default function SEO({
-  title = "MyPDFKit - Free PDF Tools Online",
-  description = "Merge, split, compress, and edit PDFs online for free with MyPDFKit.",
-  keywords = "merge pdf, split pdf, pdf editor, compress pdf, pdf tools, online pdf converter",
+export function SEO({
+  title = "Free PDF Tools Online - MyPDFKit",
+  description = "Convert, compress, merge, split and edit PDFs online for free with MyPDFKit's easy-to-use PDF tools.",
+  keywords = "merge pdf, split pdf, pdf editor, compress pdf, pdf tools, online pdf converter, free pdf tools, pdf merger",
   ogImage = "https://mypdfkit.netlify.app/preview.png",
-  ogType = "website"
+  ogType = "website",
+  schema
 }: SEOProps) {
   const pathname = usePathname();
   const url = `https://mypdfkit.netlify.app${pathname}`;
-  
-  const pageType = pathname.includes('/blog') ? 'BlogPosting' : 'WebPage';
-  
+
+  const pageType = pathname?.includes('/blog') ? 'BlogPosting' : 'WebPage';
+
   // Generate rich structured data based on current page
-  const structuredData = {
+  const defaultSchema = {
     "@context": "https://schema.org",
     "@type": pageType === 'BlogPosting' ? 'BlogPosting' : 'WebSite',
     "name": title,
@@ -43,8 +43,8 @@ export default function SEO({
     }
   };
 
-  // Add additional schema for tools pages
-  const toolSchema = pathname.includes('/pdf/') ? {
+  // Tool-specific schema for better SEO
+  const toolSchema = pathname?.includes('/tools/') || pathname?.includes('/pdf/') || pathname?.includes('/image/') ? {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": title,
@@ -57,53 +57,39 @@ export default function SEO({
     }
   } : null;
 
+  const finalSchema = schema || (toolSchema || defaultSchema);
+
   return (
     <>
-      <Script id="structured-data" type="application/ld+json">
-        {JSON.stringify(structuredData)}
-      </Script>
-      
-      {toolSchema && (
-        <Script id="tool-schema" type="application/ld+json">
-          {JSON.stringify(toolSchema)}
-        </Script>
-      )}
-      
-      {/* FAQ Schema for homepage */}
-      {pathname === '/' && (
-        <Script id="faq-schema" type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": "Is MyPDFKit free to use?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Yes, MyPDFKit's core PDF tools are completely free to use with no registration required."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Are my PDF files secure?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Yes, all files are processed in your browser and never uploaded to our servers, ensuring complete privacy."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Can I merge multiple PDF files?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Yes, you can merge any number of PDF files into a single document with our merge tool."
-                }
-              }
-            ]
-          })}
-        </Script>
-      )}
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="keywords" content={keywords} />
+
+        {/* Open Graph */}
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:type" content={ogType} />
+        <meta property="og:url" content={url} />
+        <meta property="og:image" content={ogImage} />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+
+        {/* Canonical URL */}
+        <link rel="canonical" href={url} />
+
+        {/* Structured Data */}
+        <script 
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(finalSchema) }}
+        />
+      </Head>
     </>
   );
 }
+
+export default SEO;

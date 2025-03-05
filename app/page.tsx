@@ -24,40 +24,40 @@ interface Feature {
 
 const features: Feature[] = [
   {
-    title: "JPG to PDF",
-    description: "Convert and compress images to PDF format with ease",
+    title: "JPG to PDF Converter",
+    description: "Convert and compress JPG, PNG images to PDF format with high quality",
     icon: <FileInput className="w-8 h-8 text-blue-500" />,
-    href: "/image/to-pdf"
+    href: "/jpg-to-pdf"
   },
   {
-    title: "PDF to JPG",
-    description: "Convert PDF pages to compressed JPG images with high quality",
+    title: "PDF to JPG Converter",
+    description: "Convert PDF pages to compressed JPG images with excellent quality",
     icon: <FileOutput className="w-8 h-8 text-green-500" />,
-    href: "/pdf/to-images"
+    href: "/pdf-to-jpg"
   },
   {
-    title: "Compress PDF",
-    description: "Reduce PDF file size while maintaining quality and readability",
+    title: "PDF Compressor",
+    description: "Reduce PDF file size while preserving quality and readability",
     icon: <ShrinkIcon className="w-8 h-8 text-purple-500" />,
-    href: "/pdf/compress"
+    href: "/compress-pdf"
   },
   {
-    title: "Compress Images",
-    description: "Compress JPG, PNG, JPEG images with quality control and flexibility",
+    title: "Image Compressor",
+    description: "Compress JPG, PNG images with advanced quality control options",
     icon: <Images className="w-8 h-8 text-orange-500" />,
-    href: "/image/compress"
+    href: "/compress-image"
   },
   {
-    title: "Merge PDFs",
-    description: "Combine multiple PDFs into one document with ease and precision",
+    title: "PDF Merger",
+    description: "Combine multiple PDFs into one document with perfect precision",
     icon: <MergeIcon className="w-8 h-8 text-red-500" />,
-    href: "/pdf/merge"
+    href: "/merge-pdf"
   },
   {
-    title: "Split PDF",
-    description: "Split large PDF documents into smaller files by pages",
+    title: "PDF Splitter",
+    description: "Split large PDF documents into individual pages or custom ranges",
     icon: <SplitIcon className="w-8 h-8 text-yellow-500" />,
-    href: "/pdf/split"
+    href: "/split-pdf"
   }
 ]
 
@@ -66,11 +66,21 @@ import { SEO } from '@/components/shared/SEO';
 const homeSchema = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "My PDF Kit",
+  "name": "MyPDFKit - Free PDF Editor, Merger & Compressor Tools",
   "url": "https://mypdfkit.netlify.com",
-  "description": "Free online PDF tools to merge, split, compress, convert PDFs. Easy to use, no installation required.",
+  "description": "Free online PDF tools to merge, split, compress, and convert PDFs & images. No installation required, works on all devices.",
   "operatingSystem": "All",
-  "applicationCategory": "Utility"
+  "applicationCategory": "Utility",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://mypdfkit.netlify.com/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
 };
 
 // Placeholder components for Ad Banners.  Replace with actual components.

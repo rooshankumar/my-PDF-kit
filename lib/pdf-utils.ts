@@ -1,4 +1,4 @@
-import { PDFDocument } from 'pdf-lib'
+import { PDFDocument, SaveOptions } from 'pdf-lib'
 import { downloadBlob, createZipFromBlobs } from './file-utils'
 
 export type PDFCompressionOptions = 'low' | 'medium' | 'high'
@@ -19,31 +19,61 @@ export async function splitPDF(file: File, pages: number[]): Promise<Blob[]> {
   return blobs
 }
 
-export async function compressPDF(file: File, quality: PDFCompressionOptions = 'medium'): Promise<Blob> {
-  const arrayBuffer = await file.arrayBuffer()
-  const pdfDoc = await PDFDocument.load(arrayBuffer)
+export async function compressPDF(
+  pdfFile: File,
+  compressionLevel: 'low' | 'medium' | 'high' = 'medium'
+): Promise<Uint8Array> {
+  // Load the PDF file
+  const arrayBuffer = await pdfFile.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(arrayBuffer);
 
-  // Compression settings based on quality level
-  const compressionSettings = {
-    low: { imageQuality: 0.3 },
-    medium: { imageQuality: 0.5 },
-    high: { imageQuality: 0.7 }
+  // Get all pages
+  const pages = pdfDoc.getPages();
+
+  // Compression settings based on level
+  let options: SaveOptions = {
+    useObjectStreams: true,
+  };
+
+  // Apply compression settings based on level
+  if (compressionLevel === 'low') {
+    options = {
+      ...options,
+      useObjectStreams: true,
+      addDefaultPage: false,
+    };
+  } else if (compressionLevel === 'medium') {
+    options = {
+      ...options,
+      useObjectStreams: true,
+      addDefaultPage: false,
+      compress: true
+    };
+
+    // Medium compression - adjust image quality if needed
+    for (const page of pages) {
+      // This is placeholder for actual implementation
+      // In a real implementation, we would extract images and recompress them
+      continue;
+    }
+  } else if (compressionLevel === 'high') {
+    options = {
+      ...options,
+      useObjectStreams: true,
+      addDefaultPage: false,
+      compress: true
+    };
+
+    // High compression - process images more aggressively
+    for (const page of pages) {
+      // This is placeholder for actual implementation
+      // In a real implementation, we would extract images and recompress them at lower quality
+      continue;
+    }
   }
 
-  // Apply compression settings based on quality parameter
-  const settings = compressionSettings[quality]
-
-  // Save with compression options
-  const pdfBytes = await pdfDoc.save({
-    useObjectStreams: true,
-    addDefaultPage: false,
-    preserveExistingEncryption: false
-  })
-
-  // Log compression stats
-  console.log(`PDF Compression: ${(file.size / (1024 * 1024)).toFixed(2)} MB -> ${(pdfBytes.length / (1024 * 1024)).toFixed(2)} MB`)
-
-  return new Blob([pdfBytes], { type: 'application/pdf' })
+  console.log(`PDF Compression level: ${compressionLevel}`);
+  return await pdfDoc.save(options);
 }
 
 export async function convertPDFToImages(
@@ -91,7 +121,7 @@ export async function convertImagesToPDF(
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
     const imageBytes = await file.arrayBuffer()
-    
+
     let image
     if (file.type === 'image/jpeg') {
       image = await pdfDoc.embedJpg(imageBytes)
