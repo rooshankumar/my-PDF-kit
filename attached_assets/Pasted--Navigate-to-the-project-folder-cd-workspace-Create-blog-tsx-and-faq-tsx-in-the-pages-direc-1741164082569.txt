@@ -1,0 +1,75 @@
+# Navigate to the project folder
+cd ~/workspace
+
+# Create blog.tsx and faq.tsx in the pages directory
+mkdir -p pages/blog
+echo 'import Link from "next/link";
+
+export default function Blog() {
+  return (
+    <div>
+      <h1>How to Merge PDFs Online for Free</h1>
+      <p>PDFs are widely used for sharing documents, but managing multiple files can be a hassle...</p>
+      <h2>Why Merge PDFs?</h2>
+      <ul>
+        <li>✅ Better Organization</li>
+        <li>✅ Easy Sharing</li>
+        <li>✅ Free & Fast</li>
+      </ul>
+      <h2>How to Merge PDFs Using MyPDFKit?</h2>
+      <ol>
+        <li>Visit MyPDFKit - Open <a href="#">mypdfkit.netlify.app</a></li>
+        <li>Upload PDFs - Drag & drop or select files manually.</li>
+        <li>Arrange Pages - Reorder your documents if needed.</li>
+        <li>Click Merge - Instantly combine your PDFs.</li>
+        <li>Download File - Get your merged PDF in seconds.</li>
+      </ol>
+      <p>MyPDFKit makes merging PDFs effortless. Try it today!</p>
+      <Link href="/">Back to Home</Link>
+    </div>
+  );
+}' > pages/blog.tsx
+
+echo 'import Link from "next/link";
+
+export default function FAQ() {
+  const faqs = [
+    { question: "Is MyPDFKit free to use?", answer: "Yes! MyPDFKit is completely free with no hidden costs." },
+    { question: "How secure is MyPDFKit?", answer: "All uploaded files are automatically deleted after processing." },
+    { question: "Do I need to install software?", answer: "No installation needed! MyPDFKit works in any browser." },
+    { question: "Can I merge multiple PDFs at once?", answer: "Yes! Upload multiple PDFs and merge them instantly." },
+    { question: "Does MyPDFKit work on mobile?", answer: "Yes! It is mobile-friendly and works on all devices." },
+    { question: "What other features does MyPDFKit offer?", answer: "Besides merging PDFs, MyPDFKit lets you split, compress, and convert PDFs." }
+  ];
+
+  return (
+    <div>
+      <h1>Frequently Asked Questions</h1>
+      <ul>
+        {faqs.map((faq, index) => (
+          <li key={index}>
+            <strong>{faq.question}</strong>
+            <p>{faq.answer}</p>
+          </li>
+        ))}
+      </ul>
+      <Link href="/">Back to Home</Link>
+    </div>
+  );
+}' > pages/faq.tsx
+
+# Update navigation bar in _app.tsx or layout component (if needed)
+echo 'import Link from "next/link";
+
+export default function Navbar() {
+  return (
+    <nav style={{ padding: "10px", borderBottom: "1px solid #ccc" }}>
+      <Link href="/">Home</Link> | 
+      <Link href="/blog"> Blog</Link> | 
+      <Link href="/faq"> FAQ</Link>
+    </nav>
+  );
+}' > components/Navbar.tsx
+
+# Notify user
+echo "✅ Blog and FAQ pages have been added successfully!"
