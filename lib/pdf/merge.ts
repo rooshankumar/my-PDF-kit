@@ -1,10 +1,4 @@
-
-import { PDFDocument, PDFPage } from 'pdf-lib'
-
-type MergeOptions = {
-  imageQuality?: number
-  compress?: boolean
-}
+import { PDFDocument } from 'pdf-lib'
 
 export async function mergePDFs(
   files: File[],
@@ -12,59 +6,41 @@ export async function mergePDFs(
 ): Promise<Uint8Array> {
   try {
     const mergedPdf = await PDFDocument.create()
-    let totalPages = 0
-    let completedPages = 0
+    let totalPages = 0;
+    let processedPages = 0;
 
-    // First pass: count total pages
+    // First, count total pages to track progress
     for (const file of files) {
       const arrayBuffer = await file.arrayBuffer()
       const pdfDoc = await PDFDocument.load(arrayBuffer)
-      totalPages += pdfDoc.getPageIndices().length
+      totalPages += pdfDoc.getPageCount()
     }
 
-    // Second pass: merge PDFs
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i]
+    // Then perform the merge
+    for (const file of files) {
       const arrayBuffer = await file.arrayBuffer()
       const pdfDoc = await PDFDocument.load(arrayBuffer)
-      
-      const pages = pdfDoc.getPageIndices()
-      const copiedPages = await mergedPdf.copyPages(pdfDoc, pages)
-      
-      copiedPages.forEach(page => {
+      const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices())
+
+      copiedPages.forEach((page) => {
         mergedPdf.addPage(page)
-        completedPages++
+        processedPages++;
         if (onProgress) {
-          onProgress((completedPages / totalPages) * 100)
+          onProgress((processedPages / totalPages) * 100)
         }
       })
     }
 
-    // Try with different quality settings to optimize file size
-    const mergeOptions: MergeOptions = {
-      imageQuality: 0.8,
-      compress: true
-    }
-    
-    let mergedBytes = await mergedPdf.save(mergeOptions)
-    let mergedSize = mergedBytes.length
+    // Use compression options for better results
+    const pdfBytes = await mergedPdf.save({
+      useObjectStreams: true,
+      addDefaultPage: false,
+      preserveExistingEncryption: false
+    })
 
-    // If result is too large, try medium quality
-    if (mergedSize > files.reduce((acc, file) => acc + file.size, 0)) {
-      mergeOptions.imageQuality = 0.6
-      mergedBytes = await mergedPdf.save(mergeOptions)
-      mergedSize = mergedBytes.length
-    }
-
-    // If still too large, try lower quality
-    if (mergedSize > files.reduce((acc, file) => acc + file.size, 0)) {
-      mergeOptions.imageQuality = 0.4
-      mergedBytes = await mergedPdf.save(mergeOptions)
-    }
-
-    return mergedBytes
+    return pdfBytes
   } catch (error) {
-    console.error('PDF merge failed:', error)
+    console.error('PDF merge error:', error)
     throw error
   }
 }
