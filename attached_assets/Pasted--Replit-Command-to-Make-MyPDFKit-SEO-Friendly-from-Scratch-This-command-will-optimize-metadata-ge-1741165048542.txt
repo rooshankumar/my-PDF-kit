@@ -1,0 +1,99 @@
+📌 Replit Command to Make MyPDFKit SEO-Friendly from Scratch
+This command will optimize metadata, generate a sitemap, create a robots.txt file, and add structured data for better Google rankings.
+
+🛠 Replit Command for SEO Optimization
+📢 Copy & Paste this in Replit’s Shell:
+
+sh
+Copy
+Edit
+# Navigate to the project folder
+cd ~/workspace
+
+# Create the SEO-friendly _app.tsx file
+echo 'import Head from "next/head";
+
+function MyApp({ Component, pageProps }) {
+  return (
+    <>
+      <Head>
+        <title>MyPDFKit - Free PDF Tools Online</title>
+        <meta name="description" content="Merge, split, compress, and edit PDFs online for free with MyPDFKit." />
+        <meta name="keywords" content="merge pdf, split pdf, pdf editor, compress pdf, pdf tools, online pdf converter" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="MyPDFKit - Free PDF Tools Online" />
+        <meta property="og:description" content="Easily merge, split, and edit PDFs with MyPDFKit for free." />
+        <meta property="og:image" content="https://mypdfkit.netlify.app/preview.png" />
+        <meta property="og:url" content="https://mypdfkit.netlify.app/" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
+      <Component {...pageProps} />
+    </>
+  );
+}
+
+export default MyApp;' > pages/_app.tsx
+
+# Create a robots.txt file for SEO crawling
+mkdir -p public
+echo 'User-agent: *
+Allow: /
+Sitemap: https://mypdfkit.netlify.app/sitemap.xml' > public/robots.txt
+
+# Create a sitemap.xml file for Google indexing
+echo '<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://mypdfkit.netlify.app/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://mypdfkit.netlify.app/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mypdfkit.netlify.app/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>' > public/sitemap.xml
+
+# Create an SEO component with JSON-LD structured data
+mkdir -p components
+echo 'import Head from "next/head";
+
+export default function SEO() {
+  return (
+    <Head>
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "MyPDFKit",
+          "url": "https://mypdfkit.netlify.app",
+          "description": "Free online PDF tools to merge, split, and edit PDFs.",
+          "publisher": {
+            "@type": "Organization",
+            "name": "MyPDFKit"
+          }
+        })}
+      </script>
+    </Head>
+  );
+}' > components/SEO.tsx
+
+# Notify user of successful SEO setup
+echo "✅ SEO Optimization Complete! Metadata, Sitemap, Robots.txt, and Structured Data added."
+🛠 What This Does
+✅ Adds SEO metadata (title, description, Open Graph tags) to _app.tsx.
+✅ Creates robots.txt to allow search engines to crawl your site.
+✅ Generates sitemap.xml to help Google index your pages.
+✅ Includes JSON-LD structured data for better Google rankings.
+
+🚀 Next Steps
+📌 Run the command in Replit Shell.
+📌 Submit sitemap.xml to Google Search Console.
+📌 Improve Page Speed using Next.js Image Optimization.
+📌 Build backlinks by posting blogs on forums, Medium, and Reddit.
