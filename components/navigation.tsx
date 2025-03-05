@@ -37,6 +37,16 @@ const navItems: NavItem[] = [
     label: 'Image Tools',
     href: '/tools/image',
     icon: <ImageIcon className="h-4 w-4" />
+  },
+  {
+    label: 'Blog',
+    href: '/blog',
+    icon: <FileText className="h-4 w-4" /> // Placeholder icon
+  },
+  {
+    label: 'FAQ',
+    href: '/faq',
+    icon: <FileText className="h-4 w-4" /> // Placeholder icon
   }
 ]
 
