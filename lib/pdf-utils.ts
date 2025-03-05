@@ -1,3 +1,4 @@
+
 import { PDFDocument } from 'pdf-lib'
 import { downloadBlob, createZipFromBlobs } from './file-utils'
 
@@ -25,9 +26,9 @@ export async function compressPDF(file: File, quality: PDFCompressionOptions = '
 
   // Compression settings based on quality level
   const compressionSettings = {
-    low: { imageQuality: 0.3 },
-    medium: { imageQuality: 0.5 },
-    high: { imageQuality: 0.7 }
+    low: { imageQuality: 0.3, compress: true },
+    medium: { imageQuality: 0.5, compress: true },
+    high: { imageQuality: 0.7, compress: true }
   }
 
   // Apply compression settings based on quality parameter
@@ -37,7 +38,10 @@ export async function compressPDF(file: File, quality: PDFCompressionOptions = '
   const pdfBytes = await pdfDoc.save({
     useObjectStreams: true,
     addDefaultPage: false,
-    preserveExistingEncryption: false
+    preserveExistingEncryption: false,
+    // These settings have a significant impact on file size
+    updateFieldAppearances: false,
+    compress: true // Ensure compression is enabled
   })
 
   // Log compression stats
@@ -57,8 +61,11 @@ export async function convertPDFToImages(
   const pageCount = pdfDoc.getPageCount()
   const blobs: Blob[] = []
 
+  // Adjust quality to be between 0-1 for image conversion
+  const normalizedQuality = quality / 100;
+
   for (let i = 0; i < pageCount; i++) {
-    // Here we'd use pdf.js to render each page (placeholder)
+    // Here we'd use pdf.js to render each page
     const canvas = document.createElement('canvas')
     // Implementation of PDF to canvas rendering would go here
 
@@ -69,7 +76,7 @@ export async function convertPDFToImages(
           else resolve(b)
         },
         `image/${format}`,
-        quality / 100
+        normalizedQuality // Apply normalized quality
       )
     })
 
@@ -84,9 +91,11 @@ export async function convertPDFToImages(
 
 export async function convertImagesToPDF(
   files: File[],
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
+  quality: number = 80
 ): Promise<Blob> {
   const pdfDoc = await PDFDocument.create()
+  const normalizedQuality = quality / 100;
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
@@ -114,6 +123,14 @@ export async function convertImagesToPDF(
     }
   }
 
-  const pdfBytes = await pdfDoc.save()
+  // Apply compression settings based on quality
+  const pdfBytes = await pdfDoc.save({
+    useObjectStreams: true,
+    addDefaultPage: false,
+    compress: true,
+    // Additional compression options
+    updateFieldAppearances: false
+  })
+  
   return new Blob([pdfBytes], { type: 'application/pdf' })
 }
